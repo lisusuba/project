@@ -1,0 +1,60 @@
+.vw1 {
+    width: 50%;
+    height: 60vw;
+    float: left;
+    border: 1px solid red;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    background: #EBEBEB; 
+   } 
+   .vw2 {
+    width: 50%;
+    height: 60vw;
+    float: right;
+    border: 1px solid red;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    background: #F5F5F5; 
+   } 
+   .vw3 {
+    width: 50%;
+    height: 60vw;
+    float: left;
+    border: 1px solid red;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    background: #F5F5F5; 
+   } 
+   .vw4 {
+    width: 50%;
+    height: 60vw;
+    float: right;
+    border: 1px solid red;
+   	display: flex;
+    justify-content: center;
+    align-items: center; 
+    background: #EBEBEB; 
+   } 
+   .vw5 {
+    width: 50%;
+    height: 60vw;
+    float: left;
+    border: 1px solid red;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    background: #EBEBEB; 
+   } 
+   .vw6 {
+    width: 50%;
+    height: 60vw;
+    float: right;
+    border: 1px solid red;
+    display: flex;
+    justify-content: center;
+    align-items: center; 
+    background: #F5F5F5; 
+   } 

@@ -1,0 +1,21 @@
+.mian
+{
+	margin-left: 0px; 
+	float:left; width:100%; 
+	height:auto;  
+	border: 1px;
+}
+.div1
+{
+	margin-left: 0px; 
+	float:left; width:49%;
+	height:auto; 
+	/*border: 1px gray solid;*/
+}
+.div2
+{
+	margin-left: 0px; 
+	float:left; width:49%;
+	height:auto; 
+	/*border: 1px gray solid;*/
+}

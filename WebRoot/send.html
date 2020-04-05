@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+		<link rel="stylesheet" href="css/divide_equally.css" />
+		<title>寄快递</title>
+	</head>
+	<body>
+		<div class="main">
+			<div class="div1" align="center">
+				你要寄快递？
+			    <br>
+				寄件人姓名:<br>
+				<input type="text" class="fromname" placeholder="寄件人的名字">
+				<br>
+				寄件人的电话<br>
+				<input type="text" class="fromphone" placeholder="寄件人的电话">
+				<br>
+				寄件人的地址<br>
+				<input type="text" class="fromaddress" placeholder="寄件人的地址">
+				<br>
+				收件人姓名:<br>
+				<input type="text" class="toname" placeholder="收件人的名字">
+				<br>
+				收件人的电话:<br>
+				<input type="text" class="tophone" placeholder="收件人的电话">
+				<br>
+				收件人的地址:<br>
+				<input type="text" class="toaddress" placeholder="收件人的地址">
+				<br>
+				物品描述:<br>
+				<input type="text" class="goods_description" placeholder="物品描述">
+				<br>
+				<br><br>
+				<button onclick='doSubmit()'>确定</button>
+			</div>
+			<div class="div2" align="center">
+				<h1>你还可以：</h1>
+				<a href="delivery.html">帮人代取/送快递</a>
+			</div>
+		</div>
+		
+	</body>
+	<script>
+	function doSubmit()
+	{
+		//请求参数
+		var f = $('.div1');
+		var req={};
+		req.fromname=$('.fromname',f).val().trim();
+		req.fromphone=$('.fromphone',f).val().trim();
+		req.fromaddress=$('.fromaddress',f).val().trim();
+		req.toname=$('.toname',f).val().trim();
+		req.tophone=$('.tophone',f).val().trim();
+		req.toaddress=$('.toaddress',f).val().trim();
+		req.goods_description=$('.goods_description',f).val().trim();
+		$.ajax({
+			type:"post",              /*请求类型POST GET*/
+			url:"Sending",           /*服务URL，用相对地址*/
+			data: req,              /*附加请求参数*/
+			dataType: 'json',       /*期望服务器返回的数据类型*/
+			success:function(resp){ /*已经将服务器返回的数据转换成JS对象*/
+				console.log(resp);
+				if(resp.ERROR==0)
+				      alert('成功');
+				else
+				     /*  alert('出错:'+resp.reason); */
+				     alert("下单成功")
+				
+			},
+			error:function(jqXHR,textStatus,errorThrown)
+			{
+				alert("错误："+jqXHR.status);
+			}
+		});
+	}
+    </script>
+</html>

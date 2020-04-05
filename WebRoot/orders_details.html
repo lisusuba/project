@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>订单详情</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<link rel="stylesheet" href="css/bootstrap.min.css">  
+		<script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<style>
+			.con1
+			{   
+				 width:100%;
+				 height:60px; 
+				 border:1px solid gainsboro; 
+				 position:fixed; position:absolute; 
+				 top:70px; 
+				 padding: 4px;
+			 }
+		</style>
+	</head>
+	<body>
+		<nav class="navbar navbar-default navbar-fixed-top" role="navigation"> 
+		    <div class="container-fluid"> 
+		    <div> 
+		        <ul class="nav navbar-nav"> 
+		            <li class="dropdown"> 
+		                <a href="#" class="dropdown-toggle" data-toggle="dropdown"> 
+		                    <img src="img/gengduo.png" /> <b class="caret"></b> 
+		                </a> 
+		                <ul class="dropdown-menu"> 
+		                    <li><a href="mobhomepage.html">首页</a></li> 
+		                    <li class="active"><a href="mobfind1.html">代取快递</a></li> 
+		                    <li><a href="mobfind2.html">周边代购</a></li> 
+		                    <li><a href="mobfind3.html">周边代跑</a></li> 
+		                </ul> 
+		            </li> 
+		        </ul> 
+		    </div> 
+		    </div> 
+		</nav>
+		<div class="con1" name="container">
+			
+		</div>
+	</body>
+	<script>
+		var searchUrl =window.location.href;
+		var searchData =searchUrl.split("="); //截取 url中的“=”,获得“=”后面的参数
+		var sender_id = decodeURI(searchData[1]).trim();  
+		var sender_name =decodeURI(searchData[2]).trim();  
+		var sender_phone =decodeURI(searchData[3]).trim();  
+		var sender_address =decodeURI(searchData[4]).trim();
+		var recipient_name=decodeURI(searchData[5]).trim();
+		var recipient_phone=decodeURI(searchData[6]).trim();
+		var recipient_address =decodeURI(searchData[7]).trim();  
+		var goods_description =decodeURI(searchData[8]).trim();  
+		var datetime =decodeURI(searchData[9]).trim();
+		var goods_type = decodeURI(searchData[10]).trim();
+		var goods_num = decodeURI(searchData[11]).trim();
+		var brokerage = decodeURI(searchData[12]).trim();
+		if(goods_type=="1")
+		{
+			document.getElementsByName("container").innerHTML=""
+			$(".con1").append("<span class='label label-info'>从哪取快递</span>")//<input type='text' id='goods_address' class='form-control'/>
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>快递位置</span><label id='goods_address' class='form-control'></label> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>小哥姓名</span><label id='goods_man_name' class='form-control'></label> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>小哥电话</span><label id='goods_man_phone' class='form-control'></label> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>取件信息</span><label id='goods_information' class='form-control'></label> </div>");
+			$(".con1").append("<span class='label label-info'>快递送到哪</span>")
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>收件人地址</span><label id='recipienter_address' class='form-control'></label> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>收件人姓名</span><label id='recipienter_name' class='form-control'></label> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>收件人电话</span><label id='recipienter_phone' class='form-control'></label> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>可得佣金</span><label id='brokerage' class='form-control'></label> </div>");
+			$(".con1").append("<div><button name="+datetime+"="+sender_id+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+"="+recipient_phone+"="+recipient_address+"="+goods_description+"="+goods_num+"="+brokerage+ " class='btn btn-success btn-block' onclick='success(event)' type='button'>接此订单</button></div>");
+			document.getElementById("goods_address").innerHTML=sender_address;
+			document.getElementById("goods_man_name").innerHTML=sender_name;
+			document.getElementById("goods_man_phone").innerHTML=sender_phone;
+			document.getElementById("goods_information").innerHTML=goods_description;
+			document.getElementById("recipienter_address").innerHTML=recipient_address;
+			document.getElementById("recipienter_name").innerHTML=recipient_name;
+			document.getElementById("recipienter_phone").innerHTML=recipient_phone;
+			document.getElementById("brokerage").innerHTML=brokerage+"元";
+		}
+		else if(goods_type=="2")
+		{
+			document.getElementsByName("container").innerHTML=""
+			$(".con1").append("<span class='label label-info'>购物信息</span>")
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>买什么</span><label id='buy_sth' class='form-control'></label> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>从哪买</span><label id='from_where' class='form-control'></label> </div>");
+			$(".con1").append("<span class='label label-info'>送到哪</span>")
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>收件人地址</span><label id='recipienter_address' class='form-control'></label> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>收件人姓名</span><label id='recipienter_name' class='form-control'></label> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>收件人电话</span><label id='recipienter_phone' class='form-control'></label> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>可得佣金</span><label id='brokerage' class='form-control'></label> </div>");
+			$(".con1").append("<div><button name="+datetime+"="+sender_id+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+"="+recipient_phone+"="+recipient_address+"="+goods_description+"="+goods_num+"="+brokerage+ " class='btn btn-success btn-block' onclick='success(event)' type='button'>接此订单</button></div>");
+			document.getElementById("buy_sth").innerHTML=goods_description;
+			document.getElementById("from_where").innerHTML=sender_address;
+			document.getElementById("recipienter_address").innerHTML=recipient_address;
+			document.getElementById("recipienter_name").innerHTML=recipient_name;
+			document.getElementById("recipienter_phone").innerHTML=recipient_phone;
+			document.getElementById("brokerage").innerHTML=brokerage+"元";
+		}
+		else if(goods_type=="3")
+		{
+			document.getElementsByName("container").innerHTML=""
+			$(".con1").append("<span class='label label-info'>你想做什么</span>")
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>做什么</span><label id='do_sth' class='form-control'></label> </div>");
+			$(".con1").append("<span class='label label-info'>取件处信息</span>")
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>取件处地址</span><label id='from_address' class='form-control'></label> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>联系人姓名</span><label id='from_name' class='form-control'></label> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>联系人电话</span><label id='from_phone' class='form-control'></label> </div>");
+			$(".con1").append("<span class='label label-info'>送到哪</span>")
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>收件人地址</span><label id='recipienter_address' class='form-control'></label> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>收件人姓名</span><label id='recipienter_name' class='form-control'></label> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>收件人电话</span><label id='recipienter_phone' class='form-control'></label> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>可得佣金</span><label id='brokerage' class='form-control'></label> </div>");
+			$(".con1").append("<div><button name="+datetime+"="+sender_id+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+"="+recipient_phone+"="+recipient_address+"="+goods_description+"="+goods_num+"="+brokerage+ " class='btn btn-success btn-block' onclick='success(event)' type='button'>接此订单</button></div>");
+			document.getElementById("do_sth").innerHTML=goods_description;
+			document.getElementById("from_address").innerHTML=sender_address;
+			document.getElementById("from_name").innerHTML=sender_name;
+			document.getElementById("from_phone").innerHTML=sender_phone
+			document.getElementById("recipienter_address").innerHTML=recipient_address;
+			document.getElementById("recipienter_name").innerHTML=recipient_name;
+			document.getElementById("recipienter_phone").innerHTML=recipient_phone;
+			document.getElementById("brokerage").innerHTML=brokerage+"元";
+		}
+		function success(event)
+		{
+			var str = event.target.name.trim();
+			var searchData =str.split("=");
+			datetime=searchData[0];
+			sender_id=searchData[1];
+			sender_name=searchData[2];
+			sender_phone=searchData[3];
+			sender_address=searchData[4];
+			recipient_name=searchData[5];
+			recipient_phone=searchData[6];
+			recipient_address=searchData[7];
+			goods_description=searchData[8];
+			goods_num=searchData[9];
+			brokerage=searchData[10];
+//			alert(brokerage);
+			var req={};
+			req.datetime=datetime;
+			req.sender_id=sender_id;
+			req.sender_name=sender_name;
+			req.sender_phone=sender_phone;
+			req.sender_address=sender_address;
+			req.recipient_name=recipient_name;
+			req.recipient_phone=recipient_phone;
+			req.recipient_address=recipient_address;
+			req.goods_description=goods_description;
+			req.goods_num=goods_num;
+			req.borkerage=brokerage;
+//			alert(req.datetime);
+//			alert(req.borkerage)
+			$.ajax({
+				type:"post",
+				url:"Insert_delivery_orders",
+				data: req,
+				dataType: 'json', 
+				success:function(resp){ /*已经将服务器返回的数据转换成JS对象*/
+					if(resp.flag1==true)
+					      alert('接单成功');
+					else
+					      alert("接单失败");
+					
+				}
+			});
+//			alert(req.sender_name+","+req.sender_phone+","+req.sender_address+","+req.recipient_name+","+req.recipient_phone+","+req.recipient_address+","+req.goods_description+","+req.goods_num+","+req.borkerage+);
+		}
+	</script>
+</html>

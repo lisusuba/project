@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<link rel="stylesheet" href="css/bootstrap.min.css">  
+		<script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<style type="text/css">
+				.con{   
+				 width:100%;
+				 position:fixed; _position:absolute; 
+				 bottom:0px; 
+				 align-content: center; 
+				 padding: 4px;
+				 }
+			body{
+				padding-bottom: 50px;
+			}
+		</style>
+	</head>
+	<body onload="Query_address()">
+		<div class="container" id="div">
+			
+		</div>
+		<div class="con">
+				<a href="address_edit.html"><button type="button" class="btn btn-success btn-block">新增地址</button></a>
+		</div>
+	</body>
+	<script>
+		var mobfind="1";//此变量无用
+		var searchUrl =window.location.href;
+		var searchData =searchUrl.split("="); //截取 url中的“=”,获得“=”后面的参数
+		var express_name =decodeURI(searchData[1]).trim();
+		var express_phone =decodeURI(searchData[2]).trim();
+		var express_address =decodeURI(searchData[3]).trim();
+		var mobfindflag = decodeURI(searchData[4]).trim();
+		var issend = decodeURI(searchData[5]).trim();
+		//alert(mobfindflag);
+		var isexpress1;
+		var isexpress="0"; //0为收货人地址。1为快递地址
+		var flag=false;
+		var name;
+		var phone;
+		var address;
+		var isdefalut;
+		var address_num;
+		var name1;
+		var phone1;
+		var address1;
+		var isdefalut1;
+		var address_num1;
+		var str="";
+		function Query_address()
+		{
+			$.ajax({
+				type:'GET',       /* 请求类型 GET / POST */ 
+				url:'Query_your_address',  /* 服务URI, 用相对地址 */	
+				contentType:"application/json;charset=utf-8",		
+				dataType: 'json', /* 期望服务器返回的数据类型 */
+				success: function(resp){  /* 已经将服务器返回的数据转成 JS对象 */
+					//console.log(resp);
+					showResult(resp);
+				}
+			});
+//			var address="河南";
+//			$('#div').append("<li>"+address+"</li>");
+		}
+		function showResult(result)
+		{
+			var n=0;
+			for(var row of result)
+			{
+				flag=true;
+			}
+			if(flag==true)
+			{
+				for(var row of result)
+				{
+					name=row.name;
+					phone=row.phone;
+					address=row.address;
+					isdefalut=row.isdefault;
+					address_num=row.address_num;
+					isexpress1=row.isexpress;
+					if(isdefalut==0&&isexpress1==0)
+					{
+						$('#div').append("<div onclick='selected(event)' name-data="+name+"="+phone+"="+address+"="+isdefalut+"="+address_num+" style='border: 1px solid #EBEBEB;background: lightyellow;'>姓名:"+name+"<br />电话:"+phone+"<br/>地址"+address+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>");
+						$('#div').append("<div><a onclick='address_edit(event)' name="+name+"="+phone+"="+address+"="+isdefalut+"="+address_num+"><font size='2'>编辑</font><img src='img/edit.png'/></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='delete_address(event)' id="
+						+address_num+"><font size='2'>删除</font><img src='img/shanchu.png'/></a></div>");
+					}
+				}
+				for(var row of result)
+				{
+					name=row.name;
+					phone=row.phone;
+					address=row.address;
+					isdefalut=row.isdefault;
+					address_num=row.address_num;
+					isexpress1=row.isexpress;
+					if(isdefalut==1&&isexpress1==0)
+					{
+						$('#div').append("<div onclick='selected(event)' name-data="+name+"="+phone+"="+address+"="+isdefalut+"="+address_num+" style='border: 1px solid #EBEBEB; background: whilte;'>姓名:"+name+"<br />电话:"+phone+"<br/>地址:"+address+"&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</div>");
+						$("#div").append("<div><a onclick='address_edit(event)' name="+name+"="+phone+"="+address+"="+isdefalut+"="+address_num+"><font size='2'>编辑</font><img src='img/edit.png'/></a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a onclick='delete_address(event)' id="+address_num
+						+"><font size='2'>删除</font><img src='img/shanchu.png'/></a></div>");
+					}
+				}
+			}
+			else
+			{
+				alert("你还没有地址")
+			}
+		}
+		function delete_address(event)
+		{
+			var a=event.currentTarget.id;
+			alert(a);
+			$.ajax({
+				type:'GET',       /* 请求类型 GET / POST */ 
+				url:'Delete_your_address',  /* 服务URI, 用相对地址 */	
+				contentType:"application/json;charset=utf-8",		
+				dataType: 'json', /* 期望服务器返回的数据类型 */
+				data: {"address_num":a},
+				success:function(resp){ /*已经将服务器返回的数据转换成JS对象*/
+					console.log(resp);
+					if(resp.ERROR==0)
+					      alert('成功');
+					else
+					      alert("删除成功");
+					
+				},
+				error:function(jqXHR,textStatus,errorThrown)
+				{
+						/* alert("错误："+jqXHR.status); */
+						alert("删除失败");
+				}
+			});
+		}
+		function address_edit()
+		{
+			str = event.currentTarget.name;
+			var searchData =str.split("=");  
+			name1 =searchData[0];
+			phone1 =searchData[1];
+			address1 =searchData[2];
+			isdefalut1 = searchData[3];
+			address_num1 = searchData[4];
+			var url="address_edit.html"+"?"+"="+name1+"="+phone1+"="+address1+"="+isdefalut1+"="+address_num1; 
+			var Url=encodeURI(url);
+			window.location.assign(Url);
+		}
+		function selected(event)
+		{
+			var a=event.target.getAttribute("name-data");
+			var searchData =a.split("=");  
+			name1 =searchData[0];
+			phone1 =searchData[1];
+			address1 =searchData[2];
+			isdefalut1 = searchData[3];
+			address_num1 = searchData[4];
+			//alert(name1);
+			if(mobfindflag=="1")
+			{
+				var url="mobfind1.html"+"?"+"="+name1+"="+phone1+"="+address1+"="+isdefalut1+"="+address_num1+"="+isexpress+"="+express_name+"="+express_phone+"="+express_address; 
+				var Url=encodeURI(url);
+				window.location.assign(Url);
+			}
+			else if(mobfindflag=="2")
+			{
+				var url="mobfind2.html"+"?"+"="+name1+"="+phone1+"="+address1; 
+				var Url=encodeURI(url);
+				window.location.assign(Url);
+			}
+			//明天在弄
+			else if(mobfindflag=="3")
+			{
+				var url="mobfind3.html"+"?"+"="+name1+"="+phone1+"="+address1+"="+express_name+"="+express_phone+"="+express_address+"="+issend; 
+				var Url=encodeURI(url);
+				window.location.assign(Url);
+			}
+		}
+	</script>
+</html>

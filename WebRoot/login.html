@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>登录页面</title>
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+	</head>
+	<body align="center">
+		<div class="login">
+			用户名:<br>
+			<input type="text" class="login_id" placeholder="用户名">
+			<br>
+			密  码:<br>
+			<input type="password" class="login_password" placeholder="密码">
+			<br>
+			<br>
+			<button onclick='doSubmit()'>登陆</button>
+		</div>
+		<div>
+			没有账号？请先注册<br>
+			<a href="register.html">注册</a>
+		</div>
+		<audio id="music" src="music/求神.mp3">你的浏览器不支持audio标签</audio>
+	</body>
+	<script>
+		function doSubmit()
+		{
+			//请求参数
+			var f = $('.login');
+			var req={};
+			req.login_id=$('.login_id',f).val().trim();
+			req.login_password=$('.login_password',f).val().trim();
+			$.ajax({
+				type:"post",              /*请求类型POST GET*/
+				url:"Loginer",           /*服务URL，用相对地址*/
+				data: req,              /*附加请求参数*/
+				dataType: 'json',       /*期望服务器返回的数据类型*/
+				success:function(resp){ /*已经将服务器返回的数据转换成JS对象*/
+					console.log(resp);
+					if(resp.ERROR==0)
+					      alert('成功');
+					else
+					{
+					      alert('登陆成功:'+resp.reason);
+					       window.location.href = 'homepage.html';
+					}
+					
+				},
+				error:function(jqXHR,textStatus,errorThrown)
+				{
+					var music = document.getElementById('music'); 
+					music.play();
+					alert("登陆失败:账户或者密码输入错误");
+				}
+			});
+		}
+	</script>
+</html>

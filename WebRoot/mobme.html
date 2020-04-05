@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>我的主页</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<style>
+			.con1
+			{    
+				width:100%;
+				height:100%; 
+				border:1px solid gainsboro; 
+				position:fixed; position:absolute; 
+				top:70px; 
+				padding: 4px;
+			 }
+		</style>
+	</head>
+	<body onload="query_all_delivery()">
+		<nav class="navbar navbar-default navbar-fixed-top" role="navigation"> 
+		    <div class="container-fluid"> 
+		    <div> 
+		        <ul class="nav navbar-nav"> 
+		            <li class="dropdown"> 
+		                <a href="#" class="dropdown-toggle" data-toggle="dropdown"> 
+		                    <img src="img/gengduo.png" /> <b class="caret"></b> 
+		                </a> 
+		                <ul class="dropdown-menu">
+		                    <li id="li1" class="active"><a onclick="query_all_delivery()">查看接收订单</a></li> 
+		                    <li id="li2"><a onclick="query_all_send()">查看已发订单</a></li>
+		                </ul> 
+		            </li> 
+		        </ul> 
+		    </div> 
+		    </div> 
+		</nav>
+		<div class="con1">
+		
+		</div>
+	</body>
+	<script>
+//		var w;
+		var sender_address;
+		var sender_name;
+		var sender_phone;
+		var recipient_address;
+		var recipient_name;
+		var recipient_phone;
+		var brokerage;
+		var goods_description;
+		var goods_type;
+		var send_time;
+		var isget_goods;
+		var phone;
+		var person_type;
+		var type;
+		var issended;
+		function query_all_delivery()
+		{
+			$.ajax({
+				type:'GET',       /* 请求类型 GET / POST */ 
+				url:'Query_your_deliverying',  /* 服务URI, 用相对地址 */	
+				contentType:"application/json;charset=utf-8",		
+				dataType: 'json', /* 期望服务器返回的数据类型 */
+				success: function(resp){  /* 已经将服务器返回的数据转成 JS对象 */
+					//console.log(resp);
+					showResult(resp);
+				}
+			});
+		}
+		// 格式化数据并显示
+		function showResult(result)
+		{
+			var n=0;
+			document.querySelectorAll('#li1')[0].setAttribute('class', "active"); 
+			document.querySelectorAll('#li2')[0].setAttribute('class', ""); 
+			$(".con1").empty()
+			for(var row of result)
+			{
+				goods_num=row.goods_num;
+				sender_address=row.sender_address;
+				sender_name=row.sender_name;
+				sender_phone=row.sender_phone;
+				recipient_address=row.recipient_address;
+				recipient_name=row.recipient_name;
+				recipient_phone=row.recipient_phone;
+				brokerage=row.brokerage;
+				goods_description=row.goods_description;
+				goods_type=row.goods_type;
+				send_time=row.send_time;
+				isget_goods=row.isget_goods;
+				phone = row.phone;
+				type="1";//代表快递员，2代表用户
+				if(n%2==0)
+				{
+					if(goods_type=="1")
+					{
+						$(".con1").append("<div style='background-color: #FCF8E3;  border: 1px solid green;'><span class='label label-primary'>代取快递</span><span class='label label-default'>下单时间："+send_time+"</span><span class='label label-info'>佣金"+brokerage+"</span></div>");
+						$(".con1").append("<div onclick='query_details1(event)' name="+"="+phone+"="+type+"="+isget_goods+"="+goods_num+"="+goods_description+"="+brokerage+"="+goods_type+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+
+						"="+recipient_phone+"="+recipient_address+"="+send_time+" style='background-color: #FCF8E3;  border: 1px solid green;'><img src='img/quhuo.png' /><label id='send_address'>"
+						+sender_address+"<span class='label label-info'>姓名：</span>"+sender_name+"<span class='label label-info'>电话：</span>"+sender_phone+"</label><br/><img src='img/shouhuo.png' /><label id='recipienter_address'>"+recipient_address+"<span class='label label-info'>姓名：</span>"
+						+recipient_name+"<span class='label label-info'>电话：</span>"+recipient_phone+"</label></div>");
+					}
+					else if(goods_type=="2")
+					{
+						$(".con1").append("<div style='background-color: #FCF8E3;  border: 1px solid green;'><span class='label label-success'>周边代购</span></span><span class='label label-default'>下单时间："+send_time+"</span><span class='label label-info'>佣金"+brokerage+"</span></div>");
+						$(".con1").append("<div onclick='query_details1(event)' name="+"="+phone+"="+type+"="+isget_goods+"="+goods_num+"="+goods_description+"="+brokerage+"="+goods_type+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+
+						"="+recipient_phone+"="+recipient_address+"="+send_time+" style='background-color: #FCF8E3;  border: 1px solid green;'><img src='img/quhuo.png' /><label id='send_address'>"
+						+sender_address+"<span class='label label-info'>姓名：</span>"+sender_name+"<span class='label label-info'>电话：</span>"+sender_phone+"</label><br/><img src='img/shouhuo.png' /><label id='recipienter_address'>"+recipient_address
+						+"<span class='label label-info'>姓名：</span>"+recipient_name+"<span class='label label-info'>电话：</span>"+recipient_phone+"</label></div>");
+					}
+					else if(goods_type=="3")
+					{
+						$(".con1").append("<div style='background-color: #FCF8E3;  border: 1px solid green;'><span class='label label-info'>代跑腿</span></span><span class='label label-default'>下单时间："+send_time+"</span><span class='label label-info'>佣金"+brokerage+"</span></div>");
+						$(".con1").append("<div onclick='query_details1(event)' name="+"="+phone+"="+type+"="+isget_goods+"="+goods_num+"="+goods_description+"="+brokerage+"="+goods_type+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+
+						"="+recipient_phone+"="+recipient_address+"="+send_time+" style='background-color: #FCF8E3;  border: 1px solid green;'><img src='img/quhuo.png' /><label id='send_address'>"
+						+sender_address+"<span class='label label-info'>姓名：</span>"+sender_name+"<span class='label label-info'>电话：</span>"+sender_phone+"</label><br/><img src='img/shouhuo.png' /><label id='recipienter_address'>"+recipient_address+"<span class='label label-info'>姓名：</span>"
+						+recipient_name+"<span class='label label-info'>电话：</span>"+recipient_phone+"</label></div>");
+					}
+				}
+				else
+				{
+					if(goods_type=="1")
+					{
+						$(".con1").append("<div><span class='label label-primary'>代取快递</span></span><span class='label label-default'>下单时间："+send_time+"</span><span class='label label-info'>佣金"+brokerage+"</span></div>");
+						$(".con1").append("<div onclick='query_details1(event)' name="+"="+phone+"="+type+"="+isget_goods+"="+goods_num+"="+goods_description+"="+brokerage+"="+goods_type+"="+sender_name+"="+sender_phone+"="
+						+sender_address+"="+recipient_name+"="+recipient_phone+"="+recipient_address+"="+send_time+" ><img src='img/quhuo.png' /><label id='send_address'>"+sender_address+"<span class='label label-info'>姓名：</span>"+sender_name
+						+"<span class='label label-info'>电话：</span>"+sender_phone+"</label><br /><img src='img/shouhuo.png' /><label id='recipienter_address'>"+recipient_address+"<span class='label label-info'>姓名：</span>"+recipient_name+"<span class='label label-info'>电话：</span>"+recipient_phone+"</label> </div>");
+					}
+					else if(goods_type=="2")
+					{
+						$(".con1").append("<div><span class='label label-success'>周边代购</span></span><span class='label label-default'>下单时间："+send_time+"</span><span class='label label-info'>佣金"+brokerage+"</span></div>");
+						$(".con1").append("<div onclick='query_details1(event)' name="+"="+phone+"="+type+"="+isget_goods+"="+goods_num+"="+goods_description+"="+brokerage+"="+goods_type+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+
+						"="+recipient_phone+"="+recipient_address+"="+send_time+" ><img src='img/quhuo.png' /><label id='send_address'>"+sender_address+"<span class='label label-info'>姓名：</span>"+sender_name+"<span class='label label-info'>电话：</span>"+sender_phone+"</label><br /><img src='img/shouhuo.png' /><label id='recipienter_address'>"
+						+recipient_address+"<span class='label label-info'>姓名：</span>"+recipient_name+"<span class='label label-info'>电话：</span>"+recipient_phone+"</label> </div>");
+					}
+					else if(goods_type=="3")
+					{
+						$(".con1").append("<div><span class='label label-primary'>代跑腿</span></span><span class='label label-default'>下单时间："+send_time+"</span><span class='label label-info'>佣金"+brokerage+"</span></div>");
+						$(".con1").append("<div onclick='query_details1(event)' name="+"="+phone+"="+type+"="+isget_goods+"="+goods_num+"="+goods_description+"="+brokerage+"="+goods_type+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+
+						"="+recipient_phone+"="+recipient_address+"="+send_time+" ><img src='img/quhuo.png' /><label id='send_address'>"+sender_address+"<span class='label label-info'>姓名：</span>"+sender_name+"<span class='label label-info'>电话：</span>"+sender_phone+"</label><br /><img src='img/shouhuo.png' /><label id='recipienter_address'>"
+						+recipient_address+"<span class='label label-info'>姓名：</span>"+recipient_name+"<span class='label label-info'>电话：</span>"+recipient_phone+"</label> </div>");
+					}
+				}
+				n++;
+			}
+		}
+		function query_details1(event)
+		{
+			var a=event.target.getAttribute("name");
+			var searchData =a.split("=");  
+			phone = searchData[1];
+			person_type = searchData[2];
+			isget_goods = searchData[3];
+			goods_num=searchData[4];
+			goods_description=searchData[5];
+			brokerage =searchData[6];
+			goods_type =searchData[7];
+			sender_name =searchData[8];
+			sender_phone = searchData[9];
+			sender_address = searchData[10];
+			recipient_name = searchData[11];
+			recipient_phone = searchData[12];
+			recipient_address = searchData[13];
+			send_time = searchData[14];
+			//alert(goods_num);
+			var url="affrim_get_goods.html"+"?"+"="+goods_num+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+"="+recipient_phone+"="+recipient_address+"="+send_time+"="+goods_description +
+			"="+brokerage+"="+goods_type+"="+phone+"="+isget_goods+"="+person_type;
+			var Url=encodeURI(url);
+			window.location.assign(Url);
+		}
+		function query_all_send()
+		{
+			$.ajax({
+				type:'GET',       /* 请求类型 GET / POST */ 
+				url:'Query_all_sended',  /* 服务URI, 用相对地址 */	
+				contentType:"application/json;charset=utf-8",		
+				dataType: 'json', /* 期望服务器返回的数据类型 */
+				success: function(resp){  /* 已经将服务器返回的数据转成 JS对象 */
+					//console.log(resp);
+					showResult1(resp);
+				}
+			});
+		}
+		// 格式化数据并显示
+		function showResult1(result)
+		{
+			var n=0;
+			document.querySelectorAll('#li1')[0].setAttribute('class', ""); 
+			document.querySelectorAll('#li2')[0].setAttribute('class', "active"); 
+			$(".con1").empty()
+			for(var row of result)
+			{
+				goods_num=row.goods_num;
+				sender_address=row.sender_address;
+				sender_name=row.sender_name;
+				sender_phone=row.sender_phone;
+				recipient_address=row.recipient_address;
+				recipient_name=row.recipient_name;
+				recipient_phone=row.recipient_phone;
+				brokerage=row.brokerage;
+				goods_description=row.goods_description;
+				goods_type=row.goods_type;
+				send_time=row.send_time;
+				isget_goods=row.isget_goods;
+				phone = row.phone;
+				type="2";//1代表快递员，2代表用户
+				issended = row.issended;
+				if(n%2==0)
+				{
+					if(goods_type=="1")
+					{
+						$(".con1").append("<div><span class='label label-primary'>代取快递</span></span><span class='label label-default'>下单时间："+send_time+"</span><span class='label label-info'>佣金"+brokerage+"</span></div>");
+						$(".con1").append("<div onclick='query_details(event)' name="+"="+goods_num+"="+goods_description+"="+brokerage+"="+goods_type+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+
+						"="+recipient_phone+"="+recipient_address+"="+send_time+"="+phone+"="+isget_goods+"="+type+"="+issended+" style='background-color: #FCF8E3;  border: 1px solid green;'><img src='img/quhuo.png' /><label id='send_address'>"
+						+sender_address+"<span class='label label-info'>姓名：</span>"+sender_name+"<span class='label label-info'>电话：</span>"+sender_phone+"</label><br/><img src='img/shouhuo.png' /><label id='recipienter_address'>"+recipient_address+"<span class='label label-info'>姓名：</span>"
+						+recipient_name+"<span class='label label-info'>电话：</span>"+recipient_phone+"</label></div>");
+					}
+					else if(goods_type=="2")
+					{
+						$(".con1").append("<div><span class='label label-success'>周边代购</span></span><span class='label label-default'>下单时间："+send_time+"</span><span class='label label-info'>佣金"+brokerage+"</span></div>");
+						$(".con1").append("<div onclick='query_details(event)' name="+"="+goods_num+"="+goods_description+"="+brokerage+"="+goods_type+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+
+						"="+recipient_phone+"="+recipient_address+"="+send_time+"="+phone+"="+isget_goods+"="+type+"="+issended+" style='background-color: #FCF8E3;  border: 1px solid green;'><img src='img/quhuo.png' /><label id='send_address'>"
+						+sender_address+"<span class='label label-info'>姓名：</span>"+sender_name+"<span class='label label-info'>电话：</span>"+sender_phone+"</label><br/><img src='img/shouhuo.png' /><label id='recipienter_address'>"
+						+recipient_address+"<span class='label label-info'>姓名：</span>"+recipient_name+"<span class='label label-info'>电话：</span>"+recipient_phone+"</label></div>");
+					}
+					else if(goods_type=="3")
+					{
+						$(".con1").append("<div><span class='label label-success'>代跑腿</span></span><span class='label label-default'>下单时间："+send_time+"</span><span class='label label-info'>佣金"+brokerage+"</span></div>");
+						$(".con1").append("<div onclick='query_details(event)' name="+"="+goods_num+"="+goods_description+"="+brokerage+"="+goods_type+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+
+						"="+recipient_phone+"="+recipient_address+"="+send_time+"="+phone+"="+isget_goods+"="+type+"="+issended+" style='background-color: #FCF8E3;  border: 1px solid green;'><img src='img/quhuo.png' /><label id='send_address'>"
+						+sender_address+"<span class='label label-info'>姓名：</span>"+sender_name+"<span class='label label-info'>电话：</span>"+sender_phone+"</label><br/><img src='img/shouhuo.png' /><label id='recipienter_address'>"
+						+recipient_address+"<span class='label label-info'><span class='label label-info'>电话：</span></span>"+recipient_name+"电话："+recipient_phone+"</label></div>");
+					}
+				}
+				else
+				{
+					if(goods_type=="1")
+					{
+						$(".con1").append("<div><span class='label label-primary'>代取快递</span></span><span class='label label-default'>下单时间："+send_time+"</span><span class='label label-info'>佣金"+brokerage+"</span></div>");
+						$(".con1").append("<div onclick='query_details(event)' name="+"="+goods_num+"="+goods_description+"="+brokerage+"="+goods_type+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+
+						"="+recipient_phone+"="+recipient_address+"="+send_time+"="+phone+"="+isget_goods+"="+type+"="+issended+" ><img src='img/quhuo.png' /><label id='send_address'>"+sender_address+"<span class='label label-info'>姓名：</span>"+sender_name
+						+"<span class='label label-info'>电话：</span>"+sender_phone+"</label><br /><img src='img/shouhuo.png' /><label id='recipienter_address'>"+recipient_address+"<span class='label label-info'>姓名：</span>"+recipient_name+"<span class='label label-info'>电话：</span>"+recipient_phone+"</label> </div>");
+					}
+					else if(goods_type=="2")
+					{
+						$(".con1").append("<div><span class='label label-success'>周边代购</span><span class='label label-default'>下单时间："+send_time+"</span><span class='label label-info'>佣金"+brokerage+"</span></div>");
+						$(".con1").append("<div onclick='query_details(event)' name="+"="+goods_num+"="+goods_description+"="+brokerage+"="+goods_type+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+
+						"="+recipient_phone+"="+recipient_address+"="+send_time+"="+phone+"="+isget_goods+"="+type+"="+issended+" ><img src='img/quhuo.png' /><label id='send_address'>"+sender_address+"<span class='label label-info'>姓名：</span>"+sender_name+"<span class='label label-info'>电话：</span>"
+						+sender_phone+"</label><br /><img src='img/shouhuo.png' /><label id='recipienter_address'>"+recipient_address+"<span class='label label-info'>姓名：</span>"+recipient_name+"<span class='label label-info'>电话：</span>"+recipient_phone+"</label> </div>");
+					}
+					else if(goods_type=="3")
+					{
+						$(".con1").append("<div><span class='label label-info'>代跑腿</span></span><span class='label label-default'>下单时间："+send_time+"</span><span class='label label-info'>佣金"+brokerage+"</span></div>");
+						$(".con1").append("<div onclick='query_details(event)' name="+"="+goods_num+"="+goods_description+"="+brokerage+"="+goods_type+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+
+						"="+recipient_phone+"="+recipient_address+"="+send_time+"="+phone+"="+isget_goods+"="+type+"="+issended+" ><img src='img/quhuo.png' /><label id='send_address'>"+sender_address+"<span class='label label-info'>姓名：</span>"+sender_name+"<span class='label label-info'>电话：</span>"
+						+sender_phone+"</label><br /><img src='img/shouhuo.png' /><label id='recipienter_address'>"+recipient_address+"<span class='label label-info'>姓名：</span>"+recipient_name+"<span class='label label-info'>电话：</span>"+recipient_phone+"</label> </div>");
+					}
+				}
+				n++;
+			}
+		}
+		function query_details(event)
+		{
+			var a=event.target.getAttribute("name");
+			var searchData =a.split("=");  
+			goods_num=searchData[1];
+			goods_description=searchData[2];
+			brokerage =searchData[3];
+			goods_type =searchData[4];
+			sender_name =searchData[5];
+			sender_phone = searchData[6];
+			sender_address = searchData[7];
+			recipient_name = searchData[8];
+			recipient_phone = searchData[9];
+			recipient_address = searchData[10];
+			send_time = searchData[11];
+			phone = searchData[12];
+			isget_goods = searchData[13];
+			person_type = searchData[14];
+			issended = searchData[15];
+			//alert(goods_num);
+			var url="affrim_get_goods.html"+"?"+"="+goods_num+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+"="+recipient_phone+"="+recipient_address+"="+send_time+"="+goods_description +
+			"="+brokerage+"="+goods_type+"="+phone+"="+isget_goods+"="+person_type+"="+issended;
+			var Url=encodeURI(url);
+			window.location.assign(Url);
+		}
+	</script>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>注册页面</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<style>
+			body{
+				padding-top: 50px;
+			}
+			.starter{
+				padding: 40px,15px;
+				text-align: center;
+			}
+            input[type=text]{
+                border:2px solid transparent;
+                width:250px;
+                height:25px;
+            }
+            span{
+                border-radius:90px;
+                background-color:transparent;
+                width:30px;
+                height:30px;
+            }
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1 class="starter">小麻雀</h1>
+		</div>
+		<img src="img/xiaomaque.png" class="img-rounded center-block"/>
+		<div class="login">
+			<div class="input-group">
+				<span class="input-group-addon">&#12288;&#12288;&#12288;&#12288;&#12288;ID</span>
+				<input type="text" id="login_id" class="form-control" placeholder="请输入一数字/字母/数字字母组合来作为你的登录唯一表示"/>
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon">&#12288;&#12288;你的昵称</span>
+				<input type="text" id="login_name" class="form-control" placeholder="请输入你的昵称"/>
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon">密&#12288;&#12288;&#12288;&#12288;码</span>
+				<input type="password" id="login_password" class="form-control" placeholder="请输入密码"/>
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon">再输一次密码</span>
+				<input type="password" id="login_password1" class="form-control" placeholder="请输入密码"/>
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon">&#12288;&#12288;你的电话</span>
+				<input type="text" id="login_phone" class="form-control" placeholder="请输入电话" onkeyup="kp(this)"/><span></span>
+			</div>
+			<div>
+				<button type="button" class="btn btn-success btn-block" onclick="success()">注册</button>
+				<a href="moblogin.html" class="btn btn-link btn-block">已有账号？去登录</a>
+			</div>
+		</div>
+	</body>
+	<script>
+		var s = "";
+            var kp = function(txt)
+            {
+            		var ch = txt.value;
+            	    var n = txt.value.length;
+            	    var ino = txt.nextElementSibling;
+            	    for(var i=0;i<n;i++)
+            	    {
+            	    		var c = ch.charAt(i);
+            	    		if("0"<=c&&c<="9"&&n==11)
+            	    		{
+            	    			 txt.style.borderColor = "green";
+                    		 ino.style.backgroundColor = "green";
+                      	 ino.innerHTML = "电话输入正确";
+                    		 s = txt.value * 1;
+                    		 //alert(s);
+            	    		}
+            	    		else
+            	    		{
+            	    			 txt.style.borderColor = "red";
+			             ino.style.backgroundColor = "red";
+			             ino.innerHTML = "电话号码格式不正确";
+			             s = "";
+			             return;
+            	    		}
+            	    }
+            }
+		function success()
+		{
+			//请求参数
+			var login_id=document.getElementById('login_id').value.trim();
+			var login_name=document.getElementById('login_name').value.trim();
+			var login_password=document.getElementById('login_password').value.trim();
+			var login_password1=document.getElementById('login_password1').value.trim();
+			var login_phone=s;
+			if(login_password==login_password1)
+			{
+				var req={};
+				req.id=login_id;
+				req.regist_name=login_name;
+				req.regist_password=login_password;
+				req.regist_phone=login_phone;
+				//alert(req.login_id);
+				$.ajax({
+					type:"post",              /*请求类型POST GET*/
+					url:"AddPerson",           /*服务URL，用相对地址*/
+					data: req,              /*附加请求参数*/
+					dataType: 'json',       /*期望服务器返回的数据类型*/
+					success:function(resp){ /*已经将服务器返回的数据转换成JS对象*/
+		//					console.log(resp);
+						if(resp.flag1==true)
+						{
+							alert("注册成功");
+						}
+						else
+						{
+							alert("注册失败");
+						}
+					}
+				});
+			}
+			else
+			{
+				alert("两次输入密码不一致");
+			}
+		}
+	</script>
+</html>

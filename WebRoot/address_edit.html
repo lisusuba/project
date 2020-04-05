@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<link rel="stylesheet" href="css/bootstrap.min.css">  
+		<script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<style>
+			.con{   
+				 width:100%;
+				 position:fixed; _position:absolute; 
+				 bottom:10px;
+				 right: 1px; 
+				 align-content: center; 
+				 padding: 4px;
+				 }
+			body{
+				padding-bottom: 50px;
+				padding-top: 50px;
+			    }
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div>
+				<span class="label label-info">联系人信息</span>
+				<div class="input-group">
+					<span class="input-group-addon">姓名：</span>
+					<input type="text" id="name" class="form-control" placeholder="姓名" data-toggle="tooltip"  title="此项为必填项"/>
+				</div>
+				<div class="input-group">
+					<span class="input-group-addon">电话：</span>
+					<input type="text" id="phone" class="form-control" placeholder="电话" data-toggle="tooltip"  title="此项为必填项"/>
+				</div>
+				<span class="label label-info">详细地址</span>
+				<div class="input-group">
+					<span class="input-group-addon">详细地址：</span>
+					<input type="text" id="address" class="form-control" placeholder="详细地址" data-toggle="tooltip"  title="此项为必填项"/>
+				</div>
+				<div class="container">
+					<span class="label label-info">设为默认地址</span> <input type="checkbox" name="item" value="0"/>
+				</div>
+			</div>
+			<div class="con">
+				<button type="button" class="btn btn-success btn-block" onclick="doSubmit()">保存</button>
+			</div>
+		</div>
+	</body>
+	<script>
+		var isexpress="0"; //0为收货人地址。1为快递地址
+		var isupdate=0;   //0为保存，1为更新
+		var searchUrl =window.location.href;
+		var searchData =searchUrl.split("="); //截取 url中的“=”,获得“=”后面的参数
+		var name1 =decodeURI(searchData[1]).trim();  
+		var phone1 =decodeURI(searchData[2]).trim();  
+		var address1 =decodeURI(searchData[3]).trim();
+		var isdefault1=decodeURI(searchData[4]).trim();
+		var address_num1=decodeURI(searchData[5]).trim();
+		//alert(name1);
+		if(name1=="undefined")
+		{
+			document.getElementById("name").value="";
+		}
+		else
+		{
+			document.getElementById("name").value=name1;
+			isupdate=1;
+		}
+		if(phone1=="undefined")
+		{
+			document.getElementById("phone").value="";
+		}
+		else
+		{
+			document.getElementById("phone").value=phone1;
+			isupdate=1;
+		}
+		if(address1=="undefined")
+		{
+			document.getElementById("address").value="";
+		}
+		else
+		{
+			document.getElementById("address").value=address1;
+			isupdate=1;
+		}
+		if(isdefault1==0)
+		{
+			var a=document.getElementsByName("item");
+			a[0].checked=true;
+		}
+		function doSubmit()
+		{
+			var isdefalut=1;
+			var a = document.getElementsByName("item");
+			if(a[0].checked)
+			{
+				var isdefalut=a[0].value;
+			}
+			//alert(isdefalut);
+			var name=document.getElementById("name").value.trim();
+			var phone = document.getElementById("phone").value.trim();
+			var address=document.getElementById("address").value.trim();
+			//请求参数
+			var req={};
+			req.name=name;
+			req.phone=phone;
+			req.address=address;
+			req.isdefault=isdefalut;
+			req.isupdate=isupdate;
+			req.address_num1=address_num1;
+			req.isexpress=isexpress;
+			$.ajax({
+				type:"post",              /*请求类型POST GET*/
+				url:"Add_Address",           /*服务URL，用相对地址*/
+				data: req,              /*附加请求参数*/
+				dataType: 'json',       /*期望服务器返回的数据类型*/
+				success:function(resp){ /*已经将服务器返回的数据转换成JS对象*/
+					console.log(resp);
+					if(resp.ERROR==0)
+					      alert('成功');
+					else
+					{
+					      alert('保存成功:'+resp.reason);
+//					       window.location.href = 'homepage.html';
+					}
+					
+				},
+				error:function(jqXHR,textStatus,errorThrown)
+				{
+//					var music = document.getElementById('music'); 
+//					music.play();
+					alert("保存失败");
+				}
+			});
+		}
+	</script>
+</html>

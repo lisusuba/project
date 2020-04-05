@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>帮人代取</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<style>
+			.con1
+			{    
+				width:100%;
+				height:100%; 
+				border:1px solid gainsboro; 
+				position:fixed; position:absolute; 
+				top:70px; 
+				padding: 4px;
+			 }
+		</style>
+	</head>
+	<body onload="select_all()">
+		<nav class="navbar navbar-default navbar-fixed-top" role="navigation"> 
+		    <div class="container-fluid"> 
+		    <div> 
+		        <ul class="nav navbar-nav"> 
+		            <li class="dropdown"> 
+		                <a href="#" class="dropdown-toggle" data-toggle="dropdown"> 
+		                    <img src="img/gengduo.png" /> <b class="caret"></b> 
+		                </a> 
+		                <ul class="dropdown-menu"> 
+		                    <li id="li1"><a href="mobhomepage.html">首页</a></li> 
+		                    <li id="li2" class="active"><a onclick="select_all()">查看全部可接订单</a></li> 
+		                    <li id="li3"><a onclick="select_1()">查看代取快递订单</a></li> 
+		                    <li id="li4"><a onclick="select_2()">查看周边代购订单</a></li> 
+		                    <li id="li5"><a onclick="select_3()">查看周边代跑订单</a></li> 
+		                </ul> 
+		            </li> 
+		        </ul> 
+		    </div> 
+		    </div> 
+		</nav>
+		<div id="div" class="con1">
+			<div class="panel-heading">
+				<h3 class="panel-title">可接单</h3>
+			</div>
+			<table class="table" id="tab">
+				<th>类型 </th>
+				<th>取货地址</th>
+				<th>送货地址</th>
+				<th>佣金</th>
+			</table>
+		</div>
+	</body>
+	<script>
+		var myselect_all;
+		var myselect_1;
+		var myselect_2;
+		var myselect_3;  //四个全局的计时变量，定时刷新页面
+		var sender_id;
+		var sender_name;
+		var sender_phone;
+		var sender_address;
+		var recipient_name;
+		var recipient_phone;
+		var recipient_address;
+		var goods_description;
+		var brokerage;//佣金
+		var datetime;
+		var goods_num;
+		var goods_type;
+		function select_all()		
+		{
+			var a=document.getElementsByName( "tr");
+			for(var i=0;i<a.length;i++)
+			{
+				a[i].innerHTML="";
+			}
+			$.ajax({
+				type:'GET',       /* 请求类型 GET / POST */ 
+				url:'Isdelivery',  /* 服务URI, 用相对地址 */	
+				contentType:"application/json;charset=utf-8",		
+				dataType: 'json', /* 期望服务器返回的数据类型 */
+				success: function(resp){  /* 已经将服务器返回的数据转成 JS对象 */
+					//console.log(resp);
+					showResult(resp);
+				}
+			});
+		}
+		// 格式化数据并显示
+		function showResult(result)
+		{
+			for(var row of result)
+			{
+				sender_id=row.sender_id;
+				sender_name=row.sender_name;
+				sender_phone=row.sender_phone;
+				sender_address=row.sender_address;
+				recipient_name=row.recipient_name;
+				recipient_phone=row.recipient_phone;
+				recipient_address=row.recipient_address;
+				goods_description=row.goods_description;
+				datetime=row.date;
+				goods_num=row.goods_num;
+				goods_type=row.goods_type;
+				brokerage=row.brokerage;
+				if(row.goods_type=="1")
+				{
+					$(".table").append("<tr id="+goods_num+" name='tr' onclick='query_details(event)' name-data="+sender_id+"="+brokerage+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+"="+recipient_phone+"="+recipient_address+"="+goods_description+"="+goods_type+"="+datetime+"><td><span class='label label-primary'>代取快递</span></td><td>"+row.sender_address+"</td><td>"+row.recipient_address+"</td><td>"+row.brokerage+"</td></tr>");
+				}
+				else if(row.goods_type=="2")
+				{
+					$(".table").append("<tr id="+goods_num+" name='tr' onclick='query_details(event)' name-data="+sender_id+"="+brokerage+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+"="+recipient_phone+"="+recipient_address+"="+goods_description+"="+goods_type+"="+datetime+"><td><span class='label label-info'>周边代购</span></td><td>"+row.sender_address+"</td><td>"+row.recipient_address+"</td><td>"+row.brokerage+"</td></tr>");
+				}
+				else if(row.goods_type=="3")
+				{
+					$(".table").append("<tr id="+goods_num+" name='tr' onclick='query_details(event)' name-data="+sender_id+"="+brokerage+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+"="+recipient_phone+"="+recipient_address+"="+goods_description+"="+goods_type+"="+datetime+"><td><span class='label label-success'>帮忙跑腿</span></td><td>"+row.sender_address+"</td><td>"+row.recipient_address+"</td><td>"+row.brokerage+"</td></tr>");
+				}
+			}
+			clearInterval(myselect_all);
+			myselect_all=setInterval(function(){select_all_Timer()},5000);
+		}
+		function select_all_Timer()
+		{
+			var a=document.getElementsByName( "tr");
+			for(var temp=0;temp<a.length;temp++)
+			{
+				a[temp].innerHTML="";
+			}
+			select_all();
+		}
+		function select_1()
+		{
+			document.querySelectorAll('#li1')[0].setAttribute('class', ""); 
+			document.querySelectorAll('#li2')[0].setAttribute('class', ""); 
+			document.querySelectorAll('#li3')[0].setAttribute('class', "active"); 
+			document.querySelectorAll('#li4')[0].setAttribute('class', ""); 
+			document.querySelectorAll('#li5')[0].setAttribute('class', "");
+			var a=document.getElementsByName( "tr");
+			for(var i=0;i<a.length;i++)
+			{
+				a[i].innerHTML="";
+			}
+			$.ajax({
+				type:'GET',       /* 请求类型 GET / POST */ 
+				url:'Isdelivery',  /* 服务URI, 用相对地址 */	
+				contentType:"application/json;charset=utf-8",		
+				dataType: 'json', /* 期望服务器返回的数据类型 */
+				success: function(resp){  /* 已经将服务器返回的数据转成 JS对象 */
+					//console.log(resp);
+					showResult1(resp);
+				}
+			});
+		}
+		// 格式化数据并显示
+		function showResult1(result)
+		{
+			for(var row of result)
+			{
+				if(row.goods_type=="1")
+				{
+					sender_id=row.sender_id;
+					sender_name=row.sender_name;
+					sender_phone=row.sender_phone;
+					sender_address=row.sender_address;
+					recipient_name=row.recipient_name;
+					recipient_phone=row.recipient_phone;
+					recipient_address=row.recipient_address;
+					goods_description=row.goods_description;
+					datetime=row.date;
+					goods_num=row.goods_num;
+					goods_type=row.goods_type;
+					brokerage=row.brokerage;
+					$(".table").append("<tr id="+goods_num+" name='tr' onclick='query_details(event)' name-data="+sender_id+"="+brokerage+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+"="+recipient_phone+"="+recipient_address+"="+goods_description+"="+goods_type+"="+datetime+"><td><span class='label label-primary'>代取快递</span></td><td>"+row.sender_address+"</td><td>"+row.recipient_address+"</td><td>"+row.brokerage+"</td></tr>");
+				}
+			}
+		}
+		function select_2()
+		{
+			document.querySelectorAll('#li1')[0].setAttribute('class', ""); 
+			document.querySelectorAll('#li2')[0].setAttribute('class', ""); 
+			document.querySelectorAll('#li3')[0].setAttribute('class', ""); 
+			document.querySelectorAll('#li4')[0].setAttribute('class', "active"); 
+			document.querySelectorAll('#li5')[0].setAttribute('class', "");
+			var a=document.getElementsByName( "tr");
+			for(var i=0;i<a.length;i++)
+			{
+				a[i].innerHTML="";
+			}
+			$.ajax({
+				type:'GET',       /* 请求类型 GET / POST */ 
+				url:'Isdelivery',  /* 服务URI, 用相对地址 */	
+				contentType:"application/json;charset=utf-8",		
+				dataType: 'json', /* 期望服务器返回的数据类型 */
+				success: function(resp){  /* 已经将服务器返回的数据转成 JS对象 */
+					//console.log(resp);
+					showResult2(resp);
+				}
+			});
+		}
+		// 格式化数据并显示
+		function showResult2(result)
+		{
+			for(var row of result)
+			{
+				sender_id=row.sender_id;
+				sender_name=row.sender_name;
+				sender_phone=row.sender_phone;
+				sender_address=row.sender_address;
+				recipient_name=row.recipient_name;
+				recipient_phone=row.recipient_phone;
+				recipient_address=row.recipient_address;
+				goods_description=row.goods_description;
+				datetime=row.date;
+				goods_num=row.goods_num;
+				goods_type=row.goods_type;
+				brokerage=row.brokerage;
+				if(row.goods_type=="2")
+				{
+					$(".table").append("<tr id="+goods_num+" name='tr' onclick='query_details(event)' name-data="+sender_id+"="+brokerage+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+"="+recipient_phone+"="+recipient_address+"="+goods_description+"="+goods_type+"="+datetime+"><td><span class='label label-info'>周边代购</span></td><td>"+row.sender_address+"</td><td>"+row.recipient_address+"</td><td>"+row.brokerage+"</td></tr>");
+				}
+			}
+		}
+		function select_3()
+		{
+			document.querySelectorAll('#li1')[0].setAttribute('class', ""); 
+			document.querySelectorAll('#li2')[0].setAttribute('class', ""); 
+			document.querySelectorAll('#li3')[0].setAttribute('class', ""); 
+			document.querySelectorAll('#li4')[0].setAttribute('class', ""); 
+			document.querySelectorAll('#li5')[0].setAttribute('class', "active");
+			var a=document.getElementsByName( "tr");
+			for(var i=0;i<a.length;i++)
+			{
+				a[i].innerHTML="";
+			}
+			$.ajax({
+				type:'GET',       /* 请求类型 GET / POST */ 
+				url:'Isdelivery',  /* 服务URI, 用相对地址 */	
+				contentType:"application/json;charset=utf-8",		
+				dataType: 'json', /* 期望服务器返回的数据类型 */
+				success: function(resp){  /* 已经将服务器返回的数据转成 JS对象 */
+					//console.log(resp);
+					showResult3(resp);
+				}
+			});
+		}
+		// 格式化数据并显示
+		function showResult3(result)
+		{
+			for(var row of result)
+			{
+				sender_id=row.sender_id;
+				sender_name=row.sender_name;
+				sender_phone=row.sender_phone;
+				sender_address=row.sender_address;
+				recipient_name=row.recipient_name;
+				recipient_phone=row.recipient_phone;
+				recipient_address=row.recipient_address;
+				goods_description=row.goods_description;
+				datetime=row.date;
+				goods_num=row.goods_num;
+				goods_type=row.goods_type;
+				brokerage=row.brokerage;
+				if(row.goods_type=="3")
+				{
+					$(".table").append("<tr id="+goods_num+" name='tr' onclick='query_details(event)' name-data="+sender_id+"="+brokerage+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+"="+recipient_phone+"="+recipient_address+"="+goods_description+"="+goods_type+"="+datetime+"><td><span class='label label-success'>帮忙跑腿</span></td><td>"+row.sender_address+"</td><td>"+row.recipient_address+"</td><td>"+row.brokerage+"</td></tr>");
+				}
+			}
+		}
+		function query_details(event)
+		{
+			var c=event.currentTarget.id;
+//			alert(c);
+			var a = $("#"+c).attr("name-data");
+//			var a = event.target.getAttribute("name-data");
+			var searchData =a.split("=");  
+			sender_id = searchData[0].trim();
+			brokerage = searchData[1].trim();
+			sender_name =searchData[2].trim();
+			sender_phone =searchData[3].trim();
+			sender_address =searchData[4].trim();
+			recipient_name = searchData[5].trim();
+			recipient_phone = searchData[6].trim();
+			recipient_address = searchData[7].trim();
+			goods_description = searchData[8].trim();
+			goods_type = searchData[9].trim();
+			datetime = searchData[10].trim();
+//			alert(brokerage);
+//			alert(datetime);
+			var url="orders_details.html"+"?"+"="+sender_id+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+"="+recipient_phone+"="+recipient_address+"="+goods_description+"="+datetime+"="+goods_type+"="+c+"="+brokerage; 
+			var Url=encodeURI(url);
+			window.location.assign(Url);
+		}
+	</script>
+</html>

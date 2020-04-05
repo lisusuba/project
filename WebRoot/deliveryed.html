@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		
+		<link rel="stylesheet" href="css/common.css" />
+		<script type="text/javascript" src="js/jquery.min.js" ></script>
+		
+		<style>
+			body{
+				background-color: #eee;
+			}
+			.main{
+				width: 1500px;
+				margin: 20px auto;
+				background-color: #fff;
+				min-height: 400px;
+				padding: 10px;
+			}
+			/* 工具按钮区 */
+			.main .toolbar
+			{
+				margin:  10px 0px;
+			}
+			
+			/* 数据区 */
+			.main .content{
+				width: 1000px;
+			}
+			/* 无数据时的提示 */
+			.main .content .empty{
+				text-align: center;
+				padding: 4px;
+				display: block;
+				border: 0px solid #888;
+				border-width: 0px 1px 1px 1px;				
+			}
+			/* 列宽设定 */
+			.main .table .c1{ width: 80px; }
+			.main .table .c2{ width: 350px; }
+			.main .table .c3{ width: 200px; }
+			.main .table .c4{ width: 160px; }
+			.main .table .c12{ width: 500px; }
+		</style>
+	</head>
+	<body>
+		<div class='main'>
+			<div class='toolbar'>
+				<!--点击按钮查询你已经帮忙代取/送的快递信息：<button onclick='query()'> 查询 </button><br />-->
+				<select id="selectTodo" onchange="sel(this.value)">
+		            <option value="查看正在配送的订单">查看正在配送的订单</option>
+		            <option value="查看已配送的订单">查看已配送的订单</option>
+		            <option value="查看全部订单">查看全部订单</option>
+				</select>
+			</div>
+			<div class='content'>
+				<table class='table'>
+					<thead>
+						<th class='c1'> 订单编号 </th>
+						<!-- <th class='c2'> 客人发货时间 </th> -->
+						<th class='c2'> 你的下单时间 </th>
+						<th class='c3'> 发货人id </th>
+						<th class='c4'> 发货人姓名 </th>
+						<th class='c4'> 发货人电话 </th>
+						<th class='c4'> 发货人地址 </th>
+						<th class='c4'> 收货人姓名 </th>
+						<th class='c4'> 收货人电话 </th>
+						<th class='c4'> 收货人地址 </th>
+						<th class='c4'> 货物描述 </th>
+						<th class='c1'> 你的佣金 </th>
+						<th class='c4'> 取货路线 </th>
+						<th class='c4'> 送货路线 </th>
+						<th class='c4'> 取消订单 </th>
+						<th class='c4'> 确认送达 </th>
+					</thead>
+					<tbody>
+						
+					</tbody>
+				</table>
+				<!-- 无数据时才显示这个提示 -->
+				<div class='empty'>
+					没有数据
+				</div>
+			</div>
+			<input type="hidden" id="tempString" name="tempString" />
+		</div>
+	</body>
+	
+	<script>
+		var n=0;
+		var start_adress='';
+		var end_adress='';
+		var goods_num;
+		function sel(val)
+		{
+			if(val=="查看全部订单")
+			{
+				query();
+			}
+			else if(val=="查看正在配送的订单")
+			{
+				deliverying();
+			}
+			else if(val=="查看已配送的订单")
+			{
+				deliveryed();
+			}
+		}
+		//查看已经配送完成的订单开始
+		function deliveryed()
+		{
+			$.ajax({
+				type:'GET',       /* 请求类型 GET / POST */ 
+				url:'Deliveryed',  /* 服务URI, 用相对地址 */	
+				contentType:"application/json;charset=utf-8",		
+				dataType: 'json', /* 期望服务器返回的数据类型 */
+				success: function(resp){  /* 已经将服务器返回的数据转成 JS对象 */
+					//console.log(resp);
+					showResult(resp);
+				}
+			});
+		}
+		//查看已经配送完成的订单结束
+		//查看正在配送的订单开始
+		function deliverying()
+		{
+			$.ajax({
+				type:'GET',       /* 请求类型 GET / POST */ 
+				url:'Deliverying',  /* 服务URI, 用相对地址 */	
+				contentType:"application/json;charset=utf-8",		
+				dataType: 'json', /* 期望服务器返回的数据类型 */
+				success: function(resp){  /* 已经将服务器返回的数据转成 JS对象 */
+					//console.log(resp);
+					showResult(resp);
+				}
+			});
+		}
+		//查看正在配送的订单结束
+		//query方法开始
+		function query()
+		{
+			$.ajax({
+				type:'GET',       /* 请求类型 GET / POST */ 
+				url:'Query_your_deliverying',  /* 服务URI, 用相对地址 */	
+				contentType:"application/json;charset=utf-8",		
+				dataType: 'json', /* 期望服务器返回的数据类型 */
+				success: function(resp){  /* 已经将服务器返回的数据转成 JS对象 */
+					//console.log(resp);
+					showResult(resp);
+				}
+			});
+		}
+		////query方法结束
+		// 格式化数据并显示
+		function showResult(result)
+		{
+			var target = $(".main .content tbody");
+			target.html(""); // 清空
+			for(var row of result)
+			{
+				n=n+1;
+				start_adress=row.sender_address;
+				end_adress=row.recipient_address;
+				goods_num=row.goods_num;
+				var html='';
+				var html1='';
+				var html2='';
+				var html3='';
+				//html2+='<input type="checkbox" name="item" value='+row.goods_num+'/>' +"删除订单"+row.goods_description;
+				html+= '<button onclick='+'delivery(event) name='+row.sender_address+'>取货</button>';
+				html1+= '<button onclick='+'send(event) name='+row.recipient_address+'>送货</button>';
+				html2+=	'<button onclick='+'delete_order(event) name='+row.goods_num+'>取消</button>';
+				html3+=	'<button onclick='+'affirm(event) name='+row.goods_num+'>确认</button>';
+				var str = "<tr>"
+					+ "<td>" + row.goods_num + "</td>"
+					/* + "<td>" + row.send_time + "</td>" */
+					+ "<td>" + row.get_date + "</td>"
+					+ "<td>" + row.sender_id + "</td>"
+					+ "<td>" + row.sender_name + "</td>"
+					+ "<td>" + row.sender_phone + "</td>"
+					+ "<td>" + row.sender_address + "</td>"
+					+ "<td>" + row.recipient_name + "</td>"
+					+ "<td>" + row.recipient_phone + "</td>"
+					+ "<td>" + row.recipient_address + "</td>"
+					+ "<td>" + row.goods_description + "</td>"
+					+ "<td>" + row.brokerage + "</td>"
+					+ "<td>" + html + "</td>"
+					+ "<td>" + html1 + "</td>"
+					+ "<td>" + html2 + "</td>"
+					+ "<td>" + html3 + "</td>"
+					+ "</tr>"
+					;
+				target.append( str );
+				/* target.append( html ); */
+			}
+			
+			// 如果没有数据，则把下面的提示显示出来
+			if(result.length > 0) 
+				$(".main .content .empty").hide();
+			else 
+				$(".main .content .empty").show();
+		}
+		//查找路线函数
+		function delivery(event)
+		{
+			//alert(event.currentTarget.name);
+			var address=event.currentTarget.name;
+			var url="骑行路线规划.html"+"?"+"address="+address; 
+			var Url=encodeURI(url);
+			window.location.assign(Url);
+	//		alert(start_adress);
+		}
+		function send(event)
+		{
+			var address=event.currentTarget.name;
+			var url="骑行路线规划.html"+"?"+"address="+address; 
+			var Url=encodeURI(url);
+			window.location.assign(Url);
+		}
+		//删除代取/送订单   改为按钮  下面的要变
+		function delete_order(event) 
+		{
+			var goods_num = event.currentTarget.name;
+			$.ajax({
+				type:"post",
+				url:"Delete_order",
+				data: {"goods_num":goods_num},
+				dataType: 'json', 
+				success:function(resp){ /*已经将服务器返回的数据转换成JS对象*/
+					console.log(resp);
+					if(resp.ERROR==0)
+					      alert('成功');
+					else
+					      alert("取消订单成功");
+					
+				},
+				error:function(jqXHR,textStatus,errorThrown)
+				{
+						/* alert("错误："+jqXHR.status); */
+						alert("订单取消失败");
+				}
+			});
+		}
+		//删除代取/送订单
+		//确认送达按钮
+		function affirm(event)
+		{
+			var goods_num = event.currentTarget.name;
+			$.ajax({
+				type:"post",
+				url:"Affrim_orders_success",
+				data: {"goods_num":goods_num},
+				dataType: 'json', 
+				success:function(resp){ /*已经将服务器返回的数据转换成JS对象*/
+					console.log(resp);
+					if(resp.ERROR==0)
+					      alert('成功');
+					else
+					      alert("确认送达成功");
+					
+				},
+				error:function(jqXHR,textStatus,errorThrown)
+				{
+						/* alert("错误："+jqXHR.status); */
+						alert("确认送达失败");
+				}
+			});
+		}
+		//确认送达按钮
+	</script>
+</html>

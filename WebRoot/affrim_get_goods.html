@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>确认订单</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<meta name="format-detection" content="telephone=yes"/>
+		<link rel="stylesheet" href="css/bootstrap.min.css">  
+		<script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<style>
+			.con1
+			{    
+				width:100%;
+				height:80%; 
+				border:1px solid gainsboro; 
+				position:fixed; position:absolute; 
+				top:70px; 
+				padding: 4px;
+			 }
+			 .con2
+			{    
+				text-align: center;
+				width:100%;
+				height:100px; 
+				position:fixed; position:absolute; 
+				bottom:15px; 
+				padding: 4px;
+				border:1px solid gainsboro; 
+				
+			 }
+		</style>
+	</head>
+	<body>
+		<div class="con1">
+			
+		</div>
+		<div class="con2" name="button">
+		
+		</div>
+	</body>
+	<script>
+		var m=0;   //查看路线的<span>id
+		var searchUrl =window.location.href;
+		var searchData =searchUrl.split("="); //截取 url中的“=”,获得“=”后面的参数
+		var goods_num =decodeURI(searchData[1]).trim();
+		var sender_name =decodeURI(searchData[2]).trim();
+		var sender_phone =decodeURI(searchData[3]).trim();
+		var sender_address =decodeURI(searchData[4]).trim();
+		var recipient_name =decodeURI(searchData[5]).trim();
+		var recipient_phone =decodeURI(searchData[6]).trim();
+		var recipient_address = decodeURI(searchData[7]).trim();
+		var send_time=decodeURI(searchData[8]).trim();
+		var goods_description = decodeURI(searchData[9]).trim();
+		var brokerage = decodeURI(searchData[10]).trim();
+		var goods_type = decodeURI(searchData[11]).trim();
+		var delivery_phone=decodeURI(searchData[12]).trim();
+		var isget_goods = decodeURI(searchData[13]).trim();
+		var person_type = decodeURI(searchData[14]).trim();
+		var issended = decodeURI(searchData[15]).trim();
+//		alert(goods_type);
+		if(goods_type=="1")
+		{
+			m++;
+//			document.getElementsByName("container").innerHTML=""
+			$(".con1").append("<div style='text-align: center;'><span class='label label-info'>代取快递</span></div>");
+			$(".con1").append("<span class='label label-info'>从哪取快递</span>");//<input type='text' id='goods_address' class='form-control'/>
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>快递位置</span><label id='goods_address' class='form-control'></label><span class='input-group-addon' id="+m+" onclick='query_route(event)' address="+sender_address+"><img src='img/luxian1.png' /></span> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>小哥姓名</span><label id='goods_man_name' class='form-control'></label> </div>");
+//			$(".con1").append("<div class='input-group'><span class='input-group-addon'>小哥电话</span><label id='goods_man_phone' class='form-control'></label> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>取件信息</span><label id='goods_information' class='form-control'></label> </div>");
+			m++;
+			$(".con1").append("<span class='label label-info'>快递送到哪</span>")
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>收件人地址</span><label id='recipienter_address' class='form-control'></label><span class='input-group-addon' id="+m+" onclick='query_route(event)' address="+recipient_address+"><img src='img/luxian1.png' /></span> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>收件人姓名</span><label id='recipienter_name' class='form-control'></label> </div>");
+//			$(".con1").append("<div class='input-group'><span class='input-group-addon'>收件人电话</span><label id='recipienter_phone' class='form-control'></label> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>可得佣金</span><label id='brokerage' class='form-control'></label> </div>");
+//			$(".con1").append("<div><button name="+datetime+"="+sender_id+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+"="+recipient_phone+"="+recipient_address+"="+goods_description+"="+goods_num+"="+brokerage+ " class='btn btn-success btn-block' onclick='success(event)' type='button'>接此订单</button></div>");
+			document.getElementById("goods_address").innerHTML=sender_address;
+			document.getElementById("goods_man_name").innerHTML=sender_name;
+//			document.getElementById("goods_man_phone").innerHTML=sender_phone;
+			document.getElementById("goods_information").innerHTML=goods_description;
+			document.getElementById("recipienter_address").innerHTML=recipient_address;
+			document.getElementById("recipienter_name").innerHTML=recipient_name;
+//			document.getElementById("recipienter_phone").innerHTML=recipient_phone;
+			document.getElementById("brokerage").innerHTML=brokerage+"元";
+			if(person_type=="2")
+			{
+				if(issended=="0")
+				{
+					$(".con2").append("<div style='background-color: white;'><span class='label label-warning'>未被接单</span></div>");
+					$(".con2").append("<div><button class='btn btn-danger col-xs-12' onclick='delect_orders(event)' name="+goods_num+">取消订单</button></div>");
+				}
+				else if(issended="1")
+				{
+					if(isget_goods=="1")
+					{
+						$(".con2").append("<div style='background-color: white;'><span class='label label-info'>骑手取到货</span></div>");
+						$(".con2").append("<div><a href=tel:"+delivery_phone+"><button type='button' class='btn btn-success col-xs-6' >联系骑手</button></a></div>");
+	//					$(".con2").append("<div style='background-color: white;' class='btn-group btn-group-lg '><a><button type='button' name="+goods_num+" onclick='affirm_complete(event)' class='btn btn-success col-xs-6'>确认已送达</button></a><a href=tel:"+recipient_phone+"><button type='button' class='btn btn-success col-xs-6' >联系顾客</button></a></div>");
+					}
+					else if(isget_goods=="0")
+					{
+						$(".con2").append("<div style='background-color:white;'><span class='label label-warning'>骑手还未取到货</span></div>");
+					}
+					else if(isget_goods=="2")
+					{
+						$(".con2").append("<div style='background-color:white;'><span class='label label-info'>骑手表示已送达</span></div>");
+						$(".con2").append("<div style='background-color: white;'><a><button type='button' name="+goods_num+" onclick='finish(event)' class='btn btn-success col-xs-6'>确认收货</button></a><a href=tel:"+delivery_phone+"><button type='button' class='btn btn-success col-xs-6' >联系骑手</button></a></div>");
+					}
+					else
+					{
+						$(".con2").append("<div style='background-color:white;'><span class='label label-info'>你已经确认收货</span></div>");
+						$(".con2").append("<a href=tel:"+delivery_phone+"><button type='button' class='btn btn-success col-xs-12'>联系骑手</button></a>");
+					}
+				}
+			}
+			else if(person_type=="1")
+			{
+				if(isget_goods=="0")
+				{
+					$(".con2").append("<div style='background-color:white;'><span style='height: 15px;' class='label label-info'><font size='3'>正在取货路上</font> </span></div>");
+					$(".con2").append("<div><a href=tel:"+sender_phone+"><button type='button' class='btn btn-success col-xs-6' >联系快递小哥</button></a><button class='btn btn-danger col-xs-6' onclick='delect_orders1(event)' name="+goods_num+">取消订单</button></div>");
+				}
+				else if(isget_goods=="1")
+				{
+					$(".con2").append("<div style='background-color: white;'><a><button type='button' name="+goods_num+" onclick='affirm_get_goods(event)' class='btn btn-success col-xs-6'>确认已取到货</button></a><a href=tel:"+recipient_phone+"><button type='button' class='btn btn-success col-xs-6' >联系顾客</button></a></div>");
+//					$(".con2").append("<div style='background-color:white;' class='btn-group btn-group-lg '><span class='label label-primary'>已取到货</span> <a href=tel:"+recipient_phone+"><button type='button' class='btn btn-success col-xs-6' >联系收件人</button></a></div>");	
+				}
+				else if(isget_goods=="2")
+				{
+					$(".con2").append("<div style='background-color: white;'><button type='button' name="+goods_num+" onclick='affirm_complete(event)' class='btn btn-success col-xs-6'>确认已送达</button><a href=tel:"+recipient_phone+"><button type='button' class='btn btn-success col-xs-6' >联系顾客</button></a></div>");
+//					$(".con2").append("<div style='background-color:white;' class='btn-group btn-group-lg '><span class='label label-success'>你已送达货物</span> <a href=tel:"+recipient_phone+"><button type='button' class='btn btn-success col-xs-6' >联系收件人</button></a></div>");	
+				}
+				else if(isget_goods=="3")
+				{
+					$(".con2").append("<div style='background-color:white;'><span class='label label-info'>收件人已确认收货</span></div>");
+					$(".con2").append("<div><a href=tel:"+recipient_phone+"><button type='button' class='btn btn-success col-xs-12'>联系收件人</button></a></div>");
+				}
+			}
+		}
+		else if(goods_type=="2")
+		{
+			m++;
+//			document.getElementsByName("container").innerHTML=""
+			$(".con1").append("<div style='text-align: center;'><span class='label label-info'>周边代购</span></div>");
+			$(".con1").append("<span class='label label-info'>购物信息</span>")
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>买什么</span><label id='buy_sth' class='form-control'></label> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>从哪买</span><label id='from_where' class='form-control'></label><span class='input-group-addon' id="+m+" onclick='query_route(event)' address="+sender_address+"><img src='img/luxian1.png' /></span></div>");
+			m++;
+			$(".con1").append("<span class='label label-info'>送到哪</span>")
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>收件人地址</span><label id='recipienter_address' class='form-control'></label><span class='input-group-addon' id="+m+" onclick='query_route(event)' address="+recipient_address+"><img src='img/luxian1.png' /></span> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>收件人姓名</span><label id='recipienter_name' class='form-control'></label> </div>");
+//			$(".con1").append("<div class='input-group'><span class='input-group-addon'>收件人电话</span><label id='recipienter_phone' class='form-control'></label> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>可得佣金</span><label id='brokerage' class='form-control'></label> </div>");
+//			$(".con1").append("<div><button name="+datetime+"="+sender_id+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+"="+recipient_phone+"="+recipient_address+"="+goods_description+"="+goods_num+"="+brokerage+ " class='btn btn-success btn-block' onclick='success(event)' type='button'>接此订单</button></div>");
+			document.getElementById("buy_sth").innerHTML=goods_description;
+			document.getElementById("from_where").innerHTML=sender_address;
+			document.getElementById("recipienter_address").innerHTML=recipient_address;
+			document.getElementById("recipienter_name").innerHTML=recipient_name;
+//			document.getElementById("recipienter_phone").innerHTML=recipient_phone;
+			document.getElementById("brokerage").innerHTML=brokerage+"元";
+			if(person_type=="2")//2带表用户，1代表快递员
+			{
+				if(issended=="0")
+				{
+					$(".con2").append("<div style='background-color:white;' class='btn-group btn-group-lg '><span class='label lablabel-warning'>还未有人接单</span></div>");	
+					$(".con2").append("<div><button class='btn btn-danger col-xs-12' onclick='delect_orders(event)' name="+goods_num+">取消订单</button></div>");
+				}
+				else if(issended=="1")
+				{
+					if(isget_goods=="0")
+					{
+						$(".con2").append("<div class='text-center'><span class='label label-info'>骑手正在代购路上</span></div>");
+						$(".con2").append("<div class='text-center'><a href=tel:"+delivery_phone+"><button type='button' class='btn btn-success col-xs-12' >联系骑手</button></a></div>");	
+					}
+					else if(isget_goods=="1")
+					{
+						$(".con2").append("<div style='background-color:white;'><span class='label label-info'>骑手已经买到</span></div>");
+						$(".con2").append("<div><a href=tel:"+delivery_phone+"><button type='button' class='btn btn-success col-xs-12' >联系骑手</button></a></div>");
+					}
+					else if(isget_goods=="2")
+					{
+						$(".con2").append("<div><span class='label label-success'>骑手已送达货物</span></div>");
+						$(".con2").append("<div style='background-color: white;'><a><button type='button' name="+goods_num+" onclick='finish(event)' class='btn btn-success col-xs-6'>确认收货</button></a><a href=tel:"+delivery_phone+"><button type='button' class='btn btn-success col-xs-6' >联系骑手</button></a></div>");
+					}
+					else if(isget_goods=="3")
+					{
+						$(".con2").append("<div style='background-color:white;'><span class='label label-info'>你已确认收货</span></div>");
+						$(".con2").append("<div><a href=tel:"+delivery_phone+"><button type='button' class='btn btn-success col-xs-6' >联系骑手</button></a></div>");
+					}	
+				}
+			}
+			else if(person_type=="1")
+			{
+				if(isget_goods=="0")
+				{
+					$(".con2").append("<div style='background-color:white;'><span class='label label-info'>正在代购路上</span></div>");
+					$(".con2").append("<div><a href=tel:"+sender_phone+"><button type='button' class='btn btn-success col-xs-6' >联系卖家</button></a><button class='btn btn-danger col-xs-6' onclick='delect_orders1(event)' name="+goods_num+">取消订单</button></div>");
+				}
+				else if(isget_goods=="1")
+				{
+					$(".con2").append("<div style='background-color: white;'><a><button type='button' name="+goods_num+" onclick='affirm_get_goods(event)' class='btn btn-success col-xs-6'>确认买到货</button></a><a href=tel:"+recipient_phone+"><button type='button' class='btn btn-success col-xs-6' >联系收件人</button></a></div>");
+//					$(".con2").append("<div style='background-color:white;' class='btn-group btn-group-lg '><span class='label label-primary'>已经买到</span> <a href=tel:"+recipient_phone+"><button type='button' class='btn btn-success col-xs-6' >联系收件人</button></a></div>");	
+				}
+				else if(isget_goods=="2")
+				{
+					$(".con2").append("<div style='background-color: white;'><a><button type='button' name="+goods_num+" onclick='affirm_complete(event)' class='btn btn-success col-xs-6'>确认已送达</button></a><a href=tel:"+recipient_phone+"><button type='button' class='btn btn-success col-xs-6' >联系收件人</button></a></div>");
+//					$(".con2").append("<div style='background-color:white;' class='btn-group btn-group-lg '><span class='label label-success'>你已送达货物</span> <a href=tel:"+recipient_phone+"><button type='button' class='btn btn-success col-xs-6' >联系收件人</button></a></div>");	
+				}
+				else if(isget_goods=="3")
+				{
+					$(".con2").append("<div style='background-color:white;'><span class='label label-info'>收件人已确认收货</span></div>");
+					$(".con2").append("<a href=tel:"+recipient_phone+"><button type='button' class='btn btn-success col-xs-12' >联系收件人</button></a>");
+				}	
+			}
+		}
+		else if(goods_type=="3")
+		{
+			m++;
+//			document.getElementsByName("container").innerHTML=""
+			$(".con1").append("<div style='text-align: center;'><span class='label label-info'>代跑腿</span></div>");
+			$(".con1").append("<span class='label label-info'>你想做什么</span>")
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>做什么</span><label id='do_sth' class='form-control'></label> </div>");
+			$(".con1").append("<span class='label label-info'>地点信息</span>")
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>地址</span><label id='from_address' class='form-control'></label><span class='input-group-addon' onclick='query_route(event)' id="+ m +" address="+sender_address+"><img src='img/luxian1.png' /></span> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>联系人姓名</span><label id='from_name' class='form-control'></label> </div>");
+//			$(".con1").append("<div class='input-group'><span class='input-group-addon'>联系人电话</span><label id='from_phone' class='form-control'></label> </div>");
+			m++;
+			$(".con1").append("<span class='label label-info'>送到哪</span>")
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>收件人地址</span><label id='recipienter_address' class='form-control'></label><span class='input-group-addon' onclick='query_route(event)' id="+m+" address="+recipient_address+"><img src='img/luxian1.png' /></span></div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>收件人姓名</span><label id='recipienter_name' class='form-control'></label> </div>");
+//			$(".con1").append("<div class='input-group'><span class='input-group-addon'>收件人电话</span><label id='recipienter_phone' class='form-control'></label> </div>");
+			$(".con1").append("<div class='input-group'><span class='input-group-addon'>可得佣金</span><label id='brokerage' class='form-control'></label> </div>");
+//			$(".con1").append("<div><button name="+datetime+"="+sender_id+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+"="+recipient_phone+"="+recipient_address+"="+goods_description+"="+goods_num+"="+brokerage+ " class='btn btn-success btn-block' onclick='success(event)' type='button'>接此订单</button></div>");
+			document.getElementById("do_sth").innerHTML=goods_description;
+			document.getElementById("from_address").innerHTML=sender_address;
+			document.getElementById("from_name").innerHTML=sender_name;
+//			document.getElementById("from_phone").innerHTML=sender_phone
+			document.getElementById("recipienter_address").innerHTML=recipient_address;
+			document.getElementById("recipienter_name").innerHTML=recipient_name;
+//			document.getElementById("recipienter_phone").innerHTML=recipient_phone;
+			document.getElementById("brokerage").innerHTML=brokerage+"元";
+			if(person_type=="2")//2为用户，1为快递员
+			{
+				if(issended=="0")
+				{
+					$(".con2").append("<div style='background-color: white;' class='btn-group btn-group-lg '><span class='label lalabel-danger'>未被接单</span></div>");
+					$(".con2").append("<div><button class='btn btn-danger col-xs-12' onclick='delect_orders(event)' name="+goods_num+">取消订单</button></div>");
+				}
+				else(issended="1")
+				{
+					if(isget_goods=="1")
+					{
+						$(".con2").append("<div style='background-color: white;'><span class='label label-info'>骑手到达指定地点</span></div>");
+						$(".con2").append("<div><a href=tel:"+delivery_phone+"><button type='button' class='btn btn-success col-xs-12' >联系骑手</button></a></div>");
+	//					$(".con2").append("<div style='background-color: white;' class='btn-group btn-group-lg '><a><button type='button' name="+goods_num+" onclick='affirm_complete(event)' class='btn btn-success col-xs-6'>确认已送达</button></a><a href=tel:"+recipient_phone+"><button type='button' class='btn btn-success col-xs-6' >联系顾客</button></a></div>");
+					}
+					else if(isget_goods=="0")
+					{
+						$(".con2").append("<div style='background-color:white;'><span class='label label-info'>已被接单，请耐心等待</span></div>");
+						$(".con2").append("<div><a href=tel:"+delivery_phone+"><button type='button' class='btn btn-success col-xs-12' >联系骑手</button></a></div>");
+					}
+					else if(isget_goods=="2")
+					{
+						$(".con2").append("<div style='background-color:white;'><span class='label label-info'>骑手表示已完成</span></div>");
+						$(".con2").append("<div style='background-color: white;'><a><button type='button' name="+goods_num+" onclick='finish(event)' class='btn btn-success col-xs-6'>确认已完成</button></a><a href=tel:"+delivery_phone+"><button type='button' class='btn btn-success col-xs-6' >联系骑手</button></a></div>");
+					}
+					else
+					{
+						$(".con2").append("<div style='background-color:white;'><span class='label label-info'>你已确认完成</span></div>");	
+						$(".con2").append("<a href=tel:"+delivery_phone+"><button type='button' class='btn btn-success col-xs-6' >联系骑手</button></a>");
+					}
+				}
+			}
+			else if(person_type=="1")
+			{
+				if(isget_goods=="1")
+				{
+//					$(".con2").append("<div style='background-color: white;' class='btn-group btn-group-lg '><span class='label lalabel-default'>确认到达指定地点</span> <a href=tel:"+recipient_phone+"><button type='button' class='btn btn-success col-xs-6' >联系客户</button></a></div>");
+					$(".con2").append("<div style='background-color: white;'><a><button type='button' name="+goods_num+" onclick='affirm_get_goods(event)' class='btn btn-success col-xs-6'>确认到达指定地点</button></a><a href=tel:"+recipient_phone+"><button type='button' class='btn btn-success col-xs-6' >联系顾客</button></a></div>");
+				}
+				else if(isget_goods=="0")
+				{
+					$(".con2").append("<div style='background-color:white;'><span class='label label-info'>你还未到达指定地点</span></div>");
+					$(".con2").append("<div><a href=tel:"+recipient_phone+"><button type='button' class='btn btn-success col-xs-6' >联系客户</button></a><button class='btn btn-danger col-xs-6' onclick='delect_orders1(event)' name="+goods_num+">取消订单</button></div>");
+				}
+				else if(isget_goods=="2")
+				{
+					$(".con2").append("<div style='background-color: white;'><a><button type='button' name="+goods_num+" onclick='affirm_complete(event)' class='btn btn-success col-xs-6'>确认已完成</button></a><a href=tel:"+recipient_phone+"><button type='button' class='btn btn-success col-xs-6' >联系客户</button></a></div>");
+//					$(".con2").append("<div style='background-color:white;' class='btn-group btn-group-lg '><span class='label label-success'>确认已完成</span> <a href=tel:"+recipient_phone+"><button type='button' class='btn btn-success col-xs-6' >联系客户</button></a></div>");
+				}
+				else
+				{
+					$(".con2").append("<div style='background-color:white;'><span class='label label-info'>客户已确认完成</span></div>");
+					$(".con2").append("<div><a href=tel:"+recipient_phone+"><button type='button' class='btn btn-success col-xs-6' >联系客户</button></a></div>");
+				}
+			}
+		}
+		//下面还没改
+		function affirm_get_goods(event)
+		{
+			var a=event.target.getAttribute("name");
+			var searchData =a.split("=");  
+			goods_num =searchData[0];
+			//alert(name1);
+			$.ajax({
+				type:"POST",
+				url:"Update_state",
+				data: {"goods_num":goods_num},
+				dataType: 'json', 
+				async:true,
+				success:function(resp){
+					if(resp.flag1==1)
+					{
+						alert("确认成功");
+					}
+					else if(resp.flag1==2)
+					{
+						alert("已确认");
+					}
+					else
+					{
+						alert("确认失败")
+					}
+				}
+			});
+			var a=document.getElementsByName("button");
+			for(var temp=0;temp<a.length;temp++)
+			{
+				a[temp].innerHTML="";
+			}
+			$(".con2").append("<div style='background-color: white;' class='btn-group btn-group-lg '><a><button type='button' name="+goods_num+" onclick='affirm_complete(event)' class='btn btn-success col-xs-6'>确认已送达</button></a><a href=tel:"+recipient_phone+"><button type='button' class='btn btn-success col-xs-6' >联系顾客</button></a></div>");
+		}
+		function affirm_complete(event)
+		{
+			var a=event.target.getAttribute("name");
+			var searchData =a.split("=");  
+			goods_num =searchData[0];
+			//alert(name1);
+			$.ajax({
+				type:"POST",
+				url:"Affirm_complete",
+				data: {"goods_num":goods_num},
+				dataType: 'json', 
+				async:true,
+				success:function(resp){
+					if(resp.flag1==1)
+					{
+						alert("确认成功");
+					}
+					else if(resp.flag1==2)
+					{
+						alert("已确认");
+					}
+					else
+					{
+						alert("确认失败")
+					}
+				}
+			});
+		}
+		function query_route(event)
+		{
+			var c=event.currentTarget.id;
+			var address=$("#"+c).attr("address");
+			var url="骑行路线规划.html"+"?"+"="+address; 
+			var Url=encodeURI(url);
+			window.location.assign(Url);
+		}
+		function finish(event)
+		{
+			var a=event.target.getAttribute("name");
+			var searchData =a.split("=");  
+			goods_num =searchData[0];
+			//alert(name1);
+			$.ajax({
+				type:"POST",
+				url:"Customer_Affirm_finish",
+				data: {"goods_num":goods_num},
+				dataType: 'json', 
+				async:true,
+				success:function(resp){
+					if(resp.flag1==1)
+					{
+						alert("确认成功");
+					}
+					else if(resp.flag1==2)
+					{
+						alert("已确认");
+					}
+					else
+					{
+						alert("确认失败")
+					}
+				}
+			});
+		}
+		function delect_orders(event)
+		{
+			if(confirm("确认取消此订单？"))
+			{
+				var a=event.target.getAttribute("name");
+				var searchData =a.split("=");  
+				goods_num =searchData[0];
+		//			alert(goods_num);
+				$.ajax({
+					type:"POST",
+					url:"Mob_users_delect_orders",
+					data: {"goods_num":goods_num},
+					dataType: 'json', 
+					async:true,
+					success:function(resp){
+						if(resp.flag1==true)
+						{
+							alert("取消成功");
+						}
+						else
+						{
+							alert("取消失败");
+						}
+					}
+				});
+			}
+			else
+			{
+				return;
+			}
+		}
+		function delect_orders1(event)
+		{
+			if(confirm("确认取消此订单？"))
+			{
+				var a=event.target.getAttribute("name");
+				var searchData =a.split("=");  
+				goods_num =searchData[0];
+	//			alert(goods_num);
+				$.ajax({
+					type:"POST",
+					url:"Mob_delivery_delect_orders",
+					data: {"goods_num":goods_num},
+					dataType: 'json', 
+					async:true,
+					success:function(resp){
+						if(resp.flag1==true)
+						{
+							alert("取消成功");
+						}
+						else
+						{
+							alert("取消失败");
+						}
+					}
+				});
+			}
+			else
+			{
+				return;
+			}
+		}
+	</script>
+</html>

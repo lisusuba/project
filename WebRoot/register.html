@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>注册页面</title>
+		<script type="text/javascript" src="js/jquery.min.js"></script>
+	</head>
+	<body align="center">
+		<div class="info">
+			昵  称:<br>
+			<input type="text" class="regist_name" placeholder="取个名字吧">
+			<br>
+			账户<br>
+			<input type="text" class="id" placeholder="设置个个账户，登录时使用">
+			<br>
+			密  码<br>
+			<input type="password" class="regist_password" placeholder="请设置密码">
+			<br>
+			<br>
+			<br>
+			<button onclick='doSubmit()'>注册</button>
+			<br>
+			<a href="login.html">已有账号？去登陆！</a>
+		</div>
+	</body>
+	<script>
+		function doSubmit()
+		{
+			//请求参数
+			var f = $('.info');
+			var req={};
+			req.regist_name=$('.regist_name',f).val().trim();
+			req.id=$('.id',f).val().trim();
+			req.regist_password=$('.regist_password',f).val().trim();
+			$.ajax({
+				type:"post",              /*请求类型POST GET*/
+				url:"AddPerson",           /*服务URL，用相对地址*/
+				data: req,              /*附加请求参数*/	
+				dataType: 'json',       /*期望服务器返回的数据类型*/
+				success: function(resp){  /* 已经将服务器返回的数据转成 JS对象 */
+					//console.log(resp);
+					showResult(resp);
+				}
+			});
+		}
+		function showResult(flag)
+		{
+			if(flag==1)
+			{
+				alert("注册成功");
+				window.location.href="login.html";
+			}	
+			else
+			{
+				alert("账号已存在，换一个试试吧");
+			}
+			
+		}
+	</script>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>找人周边代购</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<link rel="stylesheet" href="css/bootstrap.min.css"> 
+		<script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<style>
+			body{
+				background-color: gainsboro;
+			}
+			.con
+			{   
+				 width:60px;
+				 height:60px; 
+				 border:1px solid gainsboro; 
+				 position:fixed; position:absolute; 
+				 bottom:30px; 
+				 right:50px; 
+				 padding: 4px;
+			 }
+			 .con1
+			 {    width:100%;
+			    	  height:60px; 
+				  border:1px solid gainsboro; 
+				  position:fixed; _position:absolute; 
+				  top:70px; 
+				  padding: 4px;
+			  }
+			   .con2
+			  {   
+				   width:93%;
+				   height:60px; 
+				   border:1px solid gainsboro; 
+				   position:fixed; _position:absolute; 
+				   bottom:10px; 
+			       right:50px; 
+				   padding: 4px;
+			   }
+	</style>
+	</head>
+	<body>
+		找人周边代购
+		<div class="con">
+			<div class="con2">
+				<ul id="mytab" class="nav nav-pills nav-justified" role="tablist">
+					<li role="presentation" ><a href="mobhomepage.html">首页</a></li>
+					<li role="presentation" ><a href="mobfind1.html">代取快递</a></li>
+					<li role="presentation" class="active"><a href="#">周边代购</a></li>
+					<li role="presentation" ><a href="mobfind3.html">周边代跑</a></li>
+				</ul>
+			</div>
+		</div>
+		<div class="con1">
+			<div class="input-group">
+				<span class="input-group-addon"><font color="red">*</font>买什么：</span>
+				<input type="text" id="goods_description" class="form-control" placeholder="请输入你想买什么：如一个番茄，两个鸡蛋" data-toggle="tooltip"  title="此项为必填项"/>
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon">在哪买：</span>
+				<input type="text" id="store_address" class="form-control" placeholder="你可以指定店铺"/>
+				<span class="input-group-addon"><font style="color: red;">非必填</font></span>
+			</div>
+			<div class="container">
+				<div class="col-xs-4 col-xs-offset-6"><img src="img/down.png" /></div>
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon"><font color="red">*</font>你的地址：</span>
+				<input type="text" id="your_address" class="form-control" placeholder="你的位置" data-toggle="tooltip"  title="此项为必填项"/>
+				<span class="input-group-addon"><a onclick="select_address()">地址簿</a></span>
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon">你的姓名：</span>
+				<input type="text" id="name" class="form-control" placeholder="你的姓名" data-toggle="tooltip"  title="此项为非必填项"/>
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon"><font color="red">*</font>你的电话：</span>
+				<input type="text" id="phone" class="form-control" placeholder="你的电话" data-toggle="tooltip"  title="此项为必填项"/>
+			</div>
+			<br />
+			<div>
+				<button type="button" class="btn btn-success btn-block" onclick="success()">发布订单</button>
+			</div>
+		</div>
+	</body>
+	<script>
+		var goods_type="2";//1为代取快递，2为周边代购，3为代跑
+		var express_name;
+		var express_phone;
+		var express_address;//三个属性没什么用，为下面的那个专门设的属性，主要传值2
+		var searchUrl =window.location.href;
+		var searchData =searchUrl.split("="); //截取 url中的“=”,获得“=”后面的参数
+		var name1 =decodeURI(searchData[1]).trim();  
+		var phone1 =decodeURI(searchData[2]).trim();  
+		var address1 =decodeURI(searchData[3]).trim();
+		if(address1=="undefined")
+		{
+			document.getElementById("your_address").value="";
+		}
+		else
+		{
+			document.getElementById("your_address").value=address1;
+		}
+		if(name1=="undefined")
+		{
+			document.getElementById("name").value="";
+		}
+		else
+		{
+			document.getElementById("name").value=name1;
+		}
+		if(phone1=="undefined")
+		{
+			document.getElementById("phone").value="";
+		}
+		else
+		{
+			document.getElementById("phone").value=phone1;
+		}
+		$(function () { $("[data-toggle='tooltip']").tooltip(); });
+		function select_address()
+		{
+			//前三个变量没有用
+			var url="myaddress.html"+"?"+"="+express_name+"="+express_phone+"="+express_address+"="+"2"; 
+			var Url=encodeURI(url);
+			window.location.assign(Url);
+		}
+		function success()
+		{
+			var fromname;
+			var fromphone="12345678910";//无意义的属性，就为下面的填充
+			var goods_description = document.getElementById("goods_description").value.trim();
+			var fromaddress = document.getElementById("store_address").value.trim();
+			var toname = document.getElementById("name").value.trim();
+			var tophone = document.getElementById("phone").value.trim();
+			var toaddress = document.getElementById("your_address").value.trim();
+			var req={};
+			req.fromaddress=fromaddress;
+			req.goods_description=goods_description;
+			req.toname=toname;
+			req.tophone=tophone;
+			req.toaddress=toaddress;
+			req.fromname=fromname;
+			req.fromphone=fromphone;
+			req.goods_type=goods_type;
+			if(goods_description=="")
+			{
+				alert("买什么不能为空")
+				return;
+			}
+			else if(toaddress =="")
+			{
+				alert("你的地址不能为空");
+				return;
+			}
+			else if(tophone=="")
+			{
+				alert("你的电话不能为空");
+				return;
+			}
+			$.ajax({
+				type:"POST",
+				url:"Sending",
+				async:true,
+				data: req,              /*附加请求参数*/
+				dataType: 'json',       /*期望服务器返回的数据类型*/
+				success:function(resp){ /*已经将服务器返回的数据转换成JS对象*/
+					console.log(resp);
+					if(resp.flag1==true)
+					      alert('发布成功');
+					else
+					      alert("发布失败");
+				 }
+			});
+		}
+	</script>
+</html>

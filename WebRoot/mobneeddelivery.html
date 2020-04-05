@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>待取货</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+	</head>
+	<body onload="query_need_pick()">
+		<div class="container">
+			
+		</div>
+	</body>
+	<script>
+		var goods_num;
+		var sender_address;
+		var sender_name;
+		var sender_phone;
+		var recipient_address;
+		var recipient_name;
+		var recipient_phone;
+		var brokerage;
+		var goods_description;
+		var goods_type;
+		var send_time;
+		var isget_goods;
+		function query_need_pick()
+		{
+			$.ajax({
+				type:'GET',       /* 请求类型 GET / POST */ 
+				url:'Query_your_deliverying',  /* 服务URI, 用相对地址 */	
+				contentType:"application/json;charset=utf-8",		
+				dataType: 'json', /* 期望服务器返回的数据类型 */
+				success: function(resp){  /* 已经将服务器返回的数据转成 JS对象 */
+					//console.log(resp);
+					showResult(resp);
+				}
+			});
+		}
+		// 格式化数据并显示
+		function showResult(result)
+		{
+			var n=0;
+			for(var row of result)
+			{
+				goods_num=row.goods_num;
+				sender_address=row.sender_address;
+				sender_name=row.sender_name;
+				sender_phone=row.sender_phone;
+				recipient_address=row.recipient_address;
+				recipient_name=row.recipient_name;
+				recipient_phone=row.recipient_phone;
+				brokerage=row.brokerage;
+				goods_description=row.goods_description;
+				goods_type=row.goods_type;
+				send_time=row.send_time;
+				isget_goods=row.isget_goods;
+				if(isget_goods==0)
+				{
+					if(n%2==0)
+					{
+						$(".container").append("<div onclick='query_details(event)' name="+"="+goods_num+"="+goods_description+"="+brokerage+"="+goods_type+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+"="+recipient_phone+"="+recipient_address+"="+send_time+" style='background-color: #FCF8E3;  border: 1px solid green;'><img src='img/quhuo.png' /><label id='send_address'>"+sender_address+"</label><br/><img src='img/shouhuo.png' /><label id='recipienter_address'>"+recipient_address+"</label></div>");
+					}
+					else
+					{
+						$(".container").append("<div onclick='query_details(event)' name="+"="+goods_num+"="+goods_description+"="+brokerage+"="+goods_type+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+"="+recipient_phone+"="+recipient_address+"="+send_time+" ><img src='img/quhuo.png' /><label id='send_address'>"+sender_address+"</label><br /><img src='img/shouhuo.png' /><label id='recipienter_address'>"+recipient_address+"</label> </div>");
+					}
+					n++;
+				}
+			}
+		}
+		function query_details(event)
+		{
+			var a=event.target.getAttribute("name");
+			var searchData =a.split("=");  
+			goods_num=searchData[1];
+			goods_description=searchData[2];
+			brokerage =searchData[3];
+			goods_type =searchData[4];
+			sender_name =searchData[5];
+			sender_phone = searchData[6];
+			sender_address = searchData[7];
+			recipient_name = searchData[8];
+			recipient_phone = searchData[9];
+			recipient_address = searchData[10];
+			send_time = searchData[11];
+			//alert(goods_num);
+			var url="delivery_orders_details.html"+"?"+"="+goods_num+"="+sender_name+"="+sender_phone+"="+sender_address+"="+recipient_name+"="+recipient_phone+"="+recipient_address+"="+send_time+"="+goods_description +"="+brokerage+"="+goods_type; 
+			var Url=encodeURI(url);
+			window.location.assign(Url);
+		}
+	</script>
+</html>

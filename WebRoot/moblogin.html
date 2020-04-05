@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>小麻雀</title>
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<link rel="stylesheet" href="css/bootstrap.min.css" />
+		<script type="text/javascript" src="js/jquery.min.js" ></script>
+		<style>
+			body{
+				padding-top: 50px;
+			}
+			.starter{
+				padding: 40px,15px;
+				text-align: center;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<h1 class="starter">小麻雀</h1>
+		</div>
+		<img src="img/xiaomaque.png" class="img-rounded center-block"/>
+		<div class="login">
+			<div class="input-group">
+				<span class="input-group-addon">用户名</span>
+				<input type="text" id="login_id" class="form-control" placeholder="请输入用户名"/>
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon">密&#12288;码</span>
+				<input type="password" id="login_password" class="form-control" placeholder="请输入密码"/>
+			</div>
+			<div>
+				<button type="button" class="btn btn-success btn-block" onclick="success()">登录</button>
+				<a href="mobregister.html" class="btn btn-link btn-block">没有账号？去注册</a>
+			</div>
+		</div>
+	</body>
+	<script>
+		function success()
+		{
+			//请求参数
+			var login_id=document.getElementById('login_id').value.trim();
+			var login_password=document.getElementById('login_password').value.trim();
+			var req={};
+			req.login_id=login_id;
+			req.login_password=login_password;
+			/* alert(req.login_id); */
+			$.ajax({
+				type:"post",              /*请求类型POST GET*/
+				url:"Loginer",           /*服务URL，用相对地址*/
+				data: req,              /*附加请求参数*/
+				dataType: 'json',       /*期望服务器返回的数据类型*/
+				success:function(resp){ /*已经将服务器返回的数据转换成JS对象*/
+					console.log(resp);
+					if(resp.ERROR==0)
+					      alert('成功');
+					else
+					{
+						 if (/phone|pad|pod|iPad pro|iPhone|iPod|ios|iPad|Android|Fennec|BlackBerry|Mobile|IEMobile|MQQBrowser|JUC|Fennec|WosBrowser|BrowserNG|WebOS|Symbian|Windows Phone/i.test(navigator.userAgent))
+						 {
+						 	alert('登陆成功:'+resp.reason);
+						 	document.getElementById('login_id').value = "";
+						 	document.getElementById('login_password').value = "";
+					       window.location.href = 'mobhomepage.html';
+						 }
+						 else
+						 {
+						 	alert('登陆成功:'+resp.reason);
+						 	document.getElementById('login_id').value = "";
+						 	document.getElementById('login_password').value = "";
+					       window.location.href = 'homepage.html';
+						 }
+					}
+					
+				},
+				error:function(jqXHR,textStatus,errorThrown)
+				{
+					alert("登陆失败：账号或者密码有错误");
+				}
+			});
+		}
+	</script>
+</html>

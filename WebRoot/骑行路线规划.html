@@ -1,0 +1,82 @@
+<!DOCTYPE html>  
+<html>
+<head>  
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />  
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />  
+<title>骑行路线规划</title>  
+<style type="text/css">  
+	html{height:100%}  
+	body{height:100%;margin:0px;padding:0px}  
+	#container{height:100%}  
+</style>  
+	<script type="text/javascript" src="http://api.map.baidu.com/api?v=3.0&ak=M07mO17TOfcTMPbGo228gKpUP3i1dPnu">
+	//v3.0版本的引用方式：src="http://api.map.baidu.com/api?v=3.0&ak=您的密钥"
+	</script>
+	</head>  
+	 
+	<body>  
+	<div id="container"></div> 
+	<script type="text/javascript"> 
+		//获取delivery传过来的地理位置开始
+		var searchUrl =window.location.href;
+		var searchData =searchUrl.split("=");        //截取 url中的“=”,获得“=”后面的参数
+		var address =decodeURI(searchData[1]);   //decodeURI解码
+		//获取delivery传过来的地理位置结束
+		var lng;
+		var lat;
+		var point;
+		var point1;
+		var myP1_lng;
+		var myP1_lat;
+		var myP2_lng;
+		var myP2_lat;
+		var map = new BMap.Map("container");
+		// 创建地图实例  
+		//var point = new BMap.Point(116.404, 39.915);
+		// 创建点坐标  
+		//map.centerAndZoom(point, 15);
+		//解析地址开始
+		map.enableScrollWheelZoom(true);
+		//map.centerAndZoom(new BMap.Point(116.404, 39.915), 14); 
+		//对自己进行定位开始
+		var geolocation = new BMap.Geolocation();
+		geolocation.getCurrentPosition(function(r){
+			if(this.getStatus() == BMAP_STATUS_SUCCESS){
+				var mk = new BMap.Marker(r.point);
+				map.addOverlay(mk);
+				map.panTo(r.point);
+				lng=r.point.lng;
+				lat=r.point.lat;
+				/* alert('您的位置：'+lng+','+lat); */
+				//地址解析开始
+				// 创建地址解析器实例
+				var myGeo = new BMap.Geocoder();
+				// 将地址解析结果显示在地图上,并调整地图视野
+				myGeo.getPoint( address , function(point){
+					if (point) {
+						myP1_lng=point.lng;
+						myP1_lat=point.lat;
+						map.centerAndZoom(new BMap.Point(myP1_lng, myP1_lat), 15);
+				        var riding = new BMap.RidingRoute(map, { 
+					    renderOptions: {
+					        map: map, 
+					        autoViewport: true 
+					    }
+						});
+						var start = new BMap.Point(lng, lat);
+						var end = new BMap.Point(myP1_lng, myP1_lat);
+						riding.search(start, end);
+						}else{
+							alert("您选择地址不正确");
+						}
+				}, "西安市");
+				//解析地址结束
+			}
+			else {
+				alert('failed'+this.getStatus());
+			}        
+		});
+		//对自己进行定位结束
+	</script>  
+</body>  
+</html>

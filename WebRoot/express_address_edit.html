@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1" />
+		<link rel="stylesheet" href="css/bootstrap.min.css">  
+		<script src="js/jquery.min.js"></script>
+		<script src="js/bootstrap.min.js"></script>
+		<style>
+			.con{   
+				 width:100%;
+				 position:fixed; _position:absolute; 
+				 bottom:10px;
+				 right: 1px; 
+				 align-content: center; 
+				 padding: 4px;
+				 }
+			body{
+				padding-bottom: 50px;
+				padding-top: 50px;
+			    }
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div>
+				<!--<div class="input-group">
+					<span class="input-group-addon">快递公司名称：</span>
+					<input type="text" id="express_name" class="form-control" placeholder="请输入快递公司名称" data-toggle="tooltip"  title="此项为必填项"/>
+				</div>-->
+				<div class="input-group">
+					<span class="input-group-addon">快递所在位置：</span>
+					<input type="text" id="goods_address" class="form-control" placeholder="请输入快递所在位置" data-toggle="tooltip"  title="此项为必填项"/>
+				</div>
+				<div class="input-group">
+					<span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;快递员姓名：</span>
+					<input type="text" id="goods_man_name" class="form-control" placeholder="请输入快递小哥姓名" data-toggle="tooltip"  title="此项为非必填项"/>
+				</div>
+				<div class="input-group">
+					<span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;快递员电话：</span>
+					<input type="text" id="goods_man_phone" class="form-control" placeholder="请输入快递小哥电话" data-toggle="tooltip"  title="此项为非必填项"/>
+				</div>
+				<div class="container">
+					<span class="label label-info">设为默认地址</span> <input type="checkbox" name="item" value="0"/>
+				</div>
+				<div class="con">
+					<button type="button" class="btn btn-success btn-block" onclick="doSubmit()">保存</button>
+				</div>	
+			</div>
+		</div>
+	</body>
+	<script>
+		var isexpress="1"; //0为收货人地址。1为快递地址
+		var isupdate=0;   //0为保存，1为更新
+		var searchUrl =window.location.href;
+		var searchData =searchUrl.split("="); //截取 url中的“=”,获得“=”后面的参数
+		var name1 =decodeURI(searchData[1]).trim();  
+		var phone1 =decodeURI(searchData[2]).trim();  
+		var address1 =decodeURI(searchData[3]).trim();
+		var isdefault1=decodeURI(searchData[4]).trim();
+		var address_num1=decodeURI(searchData[5]).trim();
+		//alert(name1);
+		if(name1=="undefined")
+		{
+			document.getElementById("goods_man_name").value="";
+		}
+		else
+		{
+			document.getElementById("goods_man_name").value=name1;
+			isupdate=1;
+		}
+		if(phone1=="undefined")
+		{
+			document.getElementById("goods_man_phone").value="";
+		}
+		else
+		{
+			document.getElementById("goods_man_phone").value=phone1;
+			isupdate=1;
+		}
+		if(address1=="undefined")
+		{
+			document.getElementById("goods_address").value="";
+		}
+		else
+		{
+			document.getElementById("goods_address").value=address1;
+			isupdate=1;
+		}
+		if(isdefault1==0)
+		{
+			var a=document.getElementsByName("item");
+			a[0].checked=true;
+		}
+		function doSubmit()
+		{
+			var isdefalut=1;
+			var a = document.getElementsByName("item");
+			if(a[0].checked)
+			{
+				var isdefalut=a[0].value;
+			}
+			//alert(isdefalut);
+			//var express_name=document.getElementById("express_name").value.trim();//快递公司名称
+			var goods_man_name=document.getElementById("goods_man_name").value.trim();
+			var goods_man_phone = document.getElementById("goods_man_phone").value.trim();
+			var goods_address=document.getElementById("goods_address").value.trim();
+			//var goods_information=document.getElementById("goods_information").value.trim();
+			//请求参数
+			var req={};
+			//req.express_name=express_name;
+			req.name=goods_man_name;
+			req.phone=goods_man_phone;
+			req.address=goods_address;
+			//req.goods_information=goods_information;
+			req.isdefault=isdefalut;
+			req.isupdate=isupdate;
+			req.address_num1=address_num1;
+			req.isexpress=isexpress;
+			$.ajax({
+				type:"post",              /*请求类型POST GET*/
+				url:"Add_Address",           /*服务URL，用相对地址*/
+				data: req,              /*附加请求参数*/
+				dataType: 'json',       /*期望服务器返回的数据类型*/
+				success:function(resp){ /*已经将服务器返回的数据转换成JS对象*/
+					console.log(resp);
+					if(resp.ERROR==0)
+					      alert('成功');
+					else
+					{
+					      alert('保存成功:'+resp.reason);
+//					       window.location.href = 'homepage.html';
+					}
+					
+				},
+				error:function(jqXHR,textStatus,errorThrown)
+				{
+//					var music = document.getElementById('music'); 
+//					music.play();
+					alert("保存失败");
+				}
+			});
+		}
+	</script>
+</html>

@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8"> 
+	<title>找人代取快递</title>
+	<meta name="viewport" content="width=device-width,initial-scale=1" />
+	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<script src="js/jquery.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+	<style>
+		body{
+			background-color: gainsboro;
+		}
+		.con
+		{   
+			 width:100px;
+			 height:60px; 
+			 border:1px solid gainsboro; 
+			 position:fixed; position:absolute; 
+			 bottom:10px; 
+			 right:50px; 
+			 padding: 4px;
+		 }
+		 .con1
+		{    width:100%;
+			 height:60px; 
+			 border:1px solid gainsboro; 
+			 position:fixed; _position:absolute; 
+			 top:50px; 
+			 padding: 4px;
+		 }
+		 .con2
+		{   
+			 width:93%;
+			 height:60px; 
+			 border:1px solid gainsboro; 
+			 position:fixed; _position:absolute; 
+			 bottom:10px; 
+			 right:50px; 
+			 padding: 4px;
+		}
+	</style>
+</head>
+	<body onload="select_default_address()">
+		<div class="con2">
+			<ul id="mytab" class="nav nav-pills nav-justified" role="tablist">
+				<li role="presentation" ><a href="mobhomepage.html">首页</a></li>
+				<li role="presentation" class="active"><a href="#">代取快递</a></li>
+				<li role="presentation" ><a href="mobfind2.html">周边代购</a></li>
+				<li role="presentation" ><a href="mobfind3.html">周边代跑</a></li>
+			</ul>
+		</div>
+		<div class="con1">
+			<div class="input-group">
+				<span class="input-group-addon"><font color="red">*</font>快递所在位置：</span>
+				<input type="text" id="goods_address" class="form-control" placeholder="请输入快递所在位置" data-toggle="tooltip"  title="此项为必填项"/>
+				<span class="input-group-addon"><a onclick="express_stay_with_address()">地址簿</a></span>
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon">&nbsp;&nbsp;&nbsp;&nbsp;联系人姓名：</span>
+				<input type="text" id="goods_man_name" class="form-control" placeholder="请输入快递小哥姓名" data-toggle="tooltip"  title="此项为非必填项"/>
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon"><font color="red">*</font>快递小哥电话：</span>
+				<input type="text" id="goods_man_phone" class="form-control" placeholder="请输入快递小哥电话" data-toggle="tooltip"  title="此项为非必填项"/>
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon"><font color="red">*</font>取件所需信息：</span>
+				<input type="text" id="goods_information" class="form-control" placeholder="输入取件所需信息,如取件码" data-toggle="tooltip"  title="此项为必填项"/>
+			</div>
+			<div class="container">
+				<div class="col-xs-4 col-xs-offset-6"><img src="img/down.png" /></div>
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon">&#12288;&#12288;<font color="red">*</font>你的位置：</span>
+				<input type="text" id="your_address" class="form-control" placeholder="你的位置" data-toggle="tooltip"  title="此项为必填项"/>
+				<span class="input-group-addon"><a onclick="person_stay_with_address()">地址簿</a></span>
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon">&#12288;&#12288;你的姓名：</span>
+				<input type="text" id="name" class="form-control" placeholder="你的姓名" data-toggle="tooltip"  title="此项为非必填项"/>
+			</div>
+			<div class="input-group">
+				<span class="input-group-addon">&#12288;&#12288;<font color="red">*</font>你的电话：</span>
+				<input type="text" id="phone" class="form-control" placeholder="你的电话" data-toggle="tooltip"  title="此项为必填项"/>
+			</div>
+			<br />
+			<div>
+				<button type="button" class="btn btn-success btn-block" onclick="success()">发布订单</button>
+			</div>
+		</div>
+	</body>
+	<script>
+		var goods_type="1";//1为代取快递，2为周边代购，3为代跑
+		var express_address;
+		var express_man_name;
+		var express_man_phone;
+		var your_name;
+		var your_phone;
+		var your_address;
+		var express_name;
+		var express_phone;
+		var express_address;
+		var a;//存储地址的标志
+		var searchUrl =window.location.href;
+		var searchData =searchUrl.split("="); //截取 url中的“=”,获得“=”后面的参数
+		var name1 =decodeURI(searchData[1]).trim();  
+		var phone1 =decodeURI(searchData[2]).trim();  
+		var address1 =decodeURI(searchData[3]).trim();
+		var address_num1=decodeURI(searchData[5]).trim();
+		var isexpress1 = decodeURI(searchData[6]).trim();
+		var name2 = decodeURI(searchData[7]).trim();
+		var phone2 = decodeURI(searchData[8]).trim();
+		var address2 = decodeURI(searchData[9]).trim();
+		if(isexpress1==1)
+		{
+			if(name1=="undefined")
+			{
+				document.getElementById("goods_man_name").value="";
+			}
+			else
+			{
+				document.getElementById("goods_man_name").value=name1;
+			}
+			if(name2=="undefined")
+			{
+				document.getElementById("name").value="";//把收件人的地址带过来并赋进去
+			}
+			else
+			{
+				document.getElementById("name").value=name2;
+			}
+			if(phone1=="undefined")
+			{
+				document.getElementById("goods_man_phone").value="";
+			}
+			else
+			{
+				document.getElementById("goods_man_phone").value=phone1;
+			}
+			if(phone2=="undefined")
+			{
+				document.getElementById("phone").value="";
+			}
+			else
+			{
+				document.getElementById("phone").value=phone2;
+			}
+			if(address1=="undefined")
+			{
+				document.getElementById("goods_address").value="";
+			}
+			else
+			{
+				document.getElementById("goods_address").value=address1;
+			}
+			if(address2=="undefined")
+			{
+				document.getElementById("your_address").value="";
+			}
+			else
+			{
+				document.getElementById("your_address").value=address2;
+			}
+		}
+		else
+		{
+			if(name1=="undefined")
+			{
+				document.getElementById("name").value="";
+			}
+			else
+			{
+				document.getElementById("name").value=name1;
+			}
+			if(name2=="undefined")
+			{
+				document.getElementById("goods_man_name").value="";
+			}
+			else
+			{
+				document.getElementById("goods_man_name").value=name2;
+			}
+			if(phone1=="undefined")
+			{
+				document.getElementById("phone").value="";
+			}
+			else
+			{
+				document.getElementById("phone").value=phone1;
+			}
+			if(phone2=="undefined")
+			{
+				document.getElementById("goods_man_phone").value="";
+			}
+			else
+			{
+				document.getElementById("goods_man_phone").value=phone2;
+			}
+			if(address1=="undefined")
+			{
+				document.getElementById("your_address").value="";
+			}
+			else
+			{
+				document.getElementById("your_address").value=address1;
+			}
+			if(address2=="undefined")
+			{
+				document.getElementById("goods_address").value="";
+			}
+			else
+			{
+				document.getElementById("goods_address").value=address2;
+			}
+		}
+		$(function () { $("[data-toggle='tooltip']").tooltip(); });
+		function select_default_address()
+		{
+			var searchUrl =window.location.href;
+			var searchData =searchUrl.split("=");
+			var isdefault1=decodeURI(searchData[4]).trim();
+			if(isdefault1=="undefined")
+			{
+				//请求用户地址
+				$.ajax({
+				type:'GET',       /* 请求类型 GET / POST */ 
+				url:'Query_your_address',  /* 服务URI, 用相对地址 */	
+				contentType:"application/json;charset=utf-8",		
+				dataType: 'json', /* 期望服务器返回的数据类型 */
+				data:{"isexpress":"0"},
+				success: function(resp){  /* 已经将服务器返回的数据转成 JS对象 */
+					//console.log(resp);
+					showResult(resp);//收件人的地址
+					}
+				});
+			}
+		}
+		function showResult(result)
+		{
+			var n=0;
+			for(var row of result)
+			{
+				flag=true;
+			}
+			if(flag==true)
+			{
+				for(var row of result)
+				{
+					name=row.name;
+					phone=row.phone;
+					address=row.address;
+					isdefalut=row.isdefault;
+					address_num=row.address_num;
+					a=row.isexpress;
+					if(isdefalut==0&&a=="0")
+					{
+						document.getElementById("name").value=name;
+						document.getElementById("phone").value=phone;
+						document.getElementById("your_address").value=address;
+					}
+				}
+				select_default_express_address();
+			}
+			else
+			{
+				document.getElementById("name").value="";
+				document.getElementById("phone").value="";
+				document.getElementById("your_address").value="";
+				select_default_express_address()
+			}
+		}
+		function select_default_express_address()
+		{
+			//alert("执行力");
+			//请求快递地址
+				$.ajax({
+				type:'GET',       /* 请求类型 GET / POST */ 
+				url:'Query_your_address',  /* 服务URI, 用相对地址 */	
+				contentType:"application/json;charset=utf-8",		
+				dataType: 'json', /* 期望服务器返回的数据类型 */
+				data:{"isexpress":"0"},
+				success: function(resp){  /* 已经将服务器返回的数据转成 JS对象 */
+					//console.log(resp);
+					showResult1(resp);//快递的地址
+					}
+				});
+		}
+		function showResult1(result)
+		{
+			var n=0;
+			for(var row of result)
+			{
+				flag=true;
+			}
+			if(flag==true)
+			{
+				for(var row of result)
+				{
+					name=row.name;
+					phone=row.phone;
+					address=row.address;
+					isdefalut=row.isdefault;
+					address_num=row.address_num;
+					a=row.isexpress;
+					if(isdefalut==0&&a=="1")
+					{
+						document.getElementById("goods_man_name").value=name;
+						document.getElementById("goods_man_phone").value=phone;
+						document.getElementById("goods_address").value=address;
+					}
+				}
+			}
+			else
+			{
+				document.getElementById("goods_man_name").value="";
+				document.getElementById("goods_man_phone").value="";
+				document.getElementById("goods_address").value="";
+			}
+		}
+		function express_stay_with_address()
+		{
+			your_name=document.getElementById("name").value.trim();
+			your_phone=document.getElementById("phone").value.trim();
+			your_address=document.getElementById("your_address").value.trim();
+			//alert(your_name+your_phone+your_address);
+			var url="express_address.html"+"?"+"="+your_name+"="+your_phone+"="+your_address; 
+			var Url=encodeURI(url);
+			window.location.assign(Url);
+		}
+		function person_stay_with_address()
+		{
+			express_name=document.getElementById("goods_man_name").value.trim();
+			express_phone=document.getElementById("goods_man_phone").value.trim();
+			express_address=document.getElementById("goods_address").value.trim();
+			//alert(express_name+express_phone+express_address);
+			var url="myaddress.html"+"?"+"="+express_name+"="+express_phone+"="+express_address+"="+"1"; 
+			var Url=encodeURI(url);
+			window.location.assign(Url);
+		}
+		function success()
+		{
+			var fromaddress = document.getElementById("goods_address").value.trim();
+			var fromname = document.getElementById("goods_man_name").value.trim();
+			var fromphone = document.getElementById("goods_man_phone").value.trim();
+			var toname = document.getElementById("name").value.trim();
+			var tophone = document.getElementById("phone").value.trim();
+			var toaddress = document.getElementById("your_address").value.trim();
+			var goods_description = document.getElementById("goods_information").value.trim();
+			var req={};
+			req.fromaddress=fromaddress;
+			req.fromname=fromname;
+			req.fromphone=fromphone;
+			req.toname=toname;
+			req.tophone=tophone;
+			req.toaddress=toaddress;
+			req.goods_description=goods_description;
+			req.goods_type=goods_type;
+			if(fromaddress=="")
+			{
+				alert("快递所在地址不能为空")
+				return;
+			}
+			else if(goods_description=="")
+			{
+				alert("取件信息不能为空");
+				return;
+			}
+			else if(toaddress =="")
+			{
+				alert("你的地址不能为空");
+				return;
+			}
+			else if(tophone=="")
+			{
+				alert("你的电话不能为空");
+				return;
+			}
+			$.ajax({
+				type:"POST",
+				url:"Sending",
+				async:true,
+				data: req,              /*附加请求参数*/
+				dataType: 'json',       /*期望服务器返回的数据类型*/
+				success:function(resp){ /*已经将服务器返回的数据转换成JS对象*/
+					console.log(resp);
+					if(resp.flag1==true)
+					      alert('发布成功');
+					else
+					      alert("发布失败");
+				 }
+			});
+		}
+	</script>
+</html>
